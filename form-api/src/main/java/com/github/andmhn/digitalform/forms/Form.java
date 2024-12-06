@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -11,11 +12,15 @@ import java.util.List;
 public class Form {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    String id;
-    String Header;
-    String Description;
+    private UUID id;
+    private String Header;
+    private String Description;
 
     @OneToMany
     @JoinColumn(name = "fk_form", referencedColumnName = "id")
-    List<Question> questions;
+    private List<Question> questions;
+
+    @OneToMany
+    @JoinColumn(name = "fk_form", referencedColumnName = "id")
+    private List<Submission> submissions;
 }

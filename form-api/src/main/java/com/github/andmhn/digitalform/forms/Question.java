@@ -11,14 +11,14 @@ import java.util.List;
 class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    Long id;
+    private Long id;
 
-    String query;
-    boolean isRequired;
-    String type;
-    List<String> choices;
+    private String query;
+    private boolean isRequired;
+    private String type;
+    private List<String> choices;
 
     @OneToMany
     @JoinColumn(name = "fk_question", referencedColumnName = "id")
-    List<Answer> answers;
+    private List<Answer> answers;
 }

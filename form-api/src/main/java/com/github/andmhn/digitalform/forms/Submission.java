@@ -11,9 +11,9 @@ import java.util.List;
 class Submission{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    Long id;
+    private Long id;
 
     @OneToMany
     @JoinColumn(name = "fk_submission", referencedColumnName = "id")
-    List<Answer> answers;
+    private List<Answer> answers;
 }

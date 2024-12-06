@@ -9,6 +9,6 @@ import lombok.Data;
 class Answer {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    Long id;
-    String answer;
+    private Long id;
+    private String answer;
 }
