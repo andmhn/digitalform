@@ -31,7 +31,7 @@ public class AuthController {
         return new AuthResponse(user.getId(), user.getEmail(), user.getName());
     }
 
-    @PostMapping("/login")
+    @PostMapping("/authenticate")
     public ResponseEntity<AuthResponse> authenticate(
             @RequestBody LoginRequest loginRequest) {
         User authUser = userService.getValidUserWithEmailAndPassword(
@@ -40,18 +40,6 @@ public class AuthController {
         return ResponseEntity.ok(new AuthResponse(
                 authUser.getId(), authUser.getEmail(), authUser.getName()
         ));
-    }
-
-    @DeleteMapping("/me")
-    public AuthResponse deleteUser(@AuthenticationPrincipal CustomUserDetails currentUser) {
-        if(currentUser == null) throw new UnauthorizedException("No Credential Provided");
-        User user = userService.getValidUserWithEmail(currentUser.getEmail());
-        userService.deleteUser(user);
-        return mapToAuthResponse(user);
-    }
-
-    private AuthResponse mapToAuthResponse(User user) {
-        return new AuthResponse(user.getId(), user.getName(), user.getEmail());
     }
 
     private User createUser(SignUpRequest signUpRequest) {

@@ -26,8 +26,4 @@ public class User {
     private String name;
     private String email;
     private String password;
-
-    @OneToMany
-    @JoinColumn(name = "ownerEmail", referencedColumnName = "id")
-    private List<Form> forms;
 }

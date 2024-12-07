@@ -34,7 +34,7 @@ public class UserService {
         return getUserByEmail(email)
                 .filter(user -> passwordEncoder.matches(password, user.getPassword()))
                 .orElseThrow(() -> new UnauthorizedException(
-                        String.format("No such user with email %s", email)
+                        String.format("Bad Credential -> Email: %s Password: %s", email, password)
                 ));
     }
 

@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 @Entity
 @Table
-class Submission{
+class Submission {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;

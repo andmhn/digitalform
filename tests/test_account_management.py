@@ -31,7 +31,7 @@ def test_authentication_of_new_user():
         "email"   : signup_payload["email"],
         "password": signup_payload["password"]
     }
-    auth_response = requests.request("POST",  BASE_URL + "/auth/login", headers=headers, data=json.dumps(auth_payload))
+    auth_response = requests.request("POST",  BASE_URL + "/auth/authenticate", headers=headers, data=json.dumps(auth_payload))
     
     assert auth_response.status_code == http.HTTPStatus.OK
 
@@ -46,16 +46,16 @@ def test_bad_credential():
         "password": signup_payload["password"] + "bad"
     }
     
-    auth_response_1 = requests.request("POST",  BASE_URL + "/auth/login", headers=headers, data=json.dumps(auth_payload_1))
+    auth_response_1 = requests.request("POST",  BASE_URL + "/auth/authenticate", headers=headers, data=json.dumps(auth_payload_1))
     assert auth_response_1.status_code == http.HTTPStatus.UNAUTHORIZED
     
-    auth_response_2 = requests.request("POST",  BASE_URL + "/auth/login", headers=headers, data=json.dumps(auth_payload_2))
+    auth_response_2 = requests.request("POST",  BASE_URL + "/auth/authenticate", headers=headers, data=json.dumps(auth_payload_2))
     assert auth_response_2.status_code == http.HTTPStatus.UNAUTHORIZED
 
 
 def delete_current_user() -> requests.Response:
     return requests.delete(
-        BASE_URL + "/auth/me",
+        BASE_URL + "/api/users/me",
         auth=HTTPBasicAuth(signup_payload["email"], signup_payload["password"])
     )
 
