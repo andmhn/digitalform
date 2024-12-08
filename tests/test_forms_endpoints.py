@@ -1,4 +1,3 @@
-# return form response dto
 from http.client import CREATED
 from time import sleep
 import requests
@@ -40,6 +39,8 @@ formData = {
 }
 
 formResponse = {}
+submission_response_1 = []
+submission_response_2 = []
 
 def test_creation_of_form():
     formPayload = json.dumps(formData)
@@ -140,9 +141,11 @@ def test_submission_of_form():
         assert submissionResponse['answers'][i]['answer_id'] != None
         assert submissionResponse['answers'][i]['question_id'] == submission[i]['question_id']
         assert submissionResponse['answers'][i]['answer'] == submission[i]['answer']
+    global submission_response_1
+    submission_response_1 = submissionResponse
 
   
-def test_submission_of_form_with_required_answers():
+def test_submission_of_form_with_only_required_answers():
     form_id = formResponse['form_id']
     url = BASE_URL + "/api/public/forms/submit?form_id=" + form_id
     submission = [
@@ -164,7 +167,8 @@ def test_submission_of_form_with_required_answers():
         assert submissionResponse['answers'][i]['answer_id'] != None
         assert submissionResponse['answers'][i]['question_id'] == submission[i]['question_id']
         assert submissionResponse['answers'][i]['answer'] == submission[i]['answer']
-
+    global submission_response_2
+    submission_response_2 = submissionResponse
   
 
 def test_submission_of_form_without_required_answers():
@@ -211,8 +215,60 @@ def test_submission_of_form_with_additional_answer():
     assert response.status_code == http.HTTPStatus.BAD_REQUEST
     
 
+def test_getting_submission_list_of_form():
+    form_id = formResponse['form_id']
+    url = BASE_URL + "/api/users/forms/submissions?form_id=" + form_id
+
+    response = requests.request("GET", 
+                                url, 
+                                headers=headers, 
+                                auth=HTTPBasicAuth(signup_payload["email"], signup_payload["password"])
+                                )
+    submissions_list = json.loads(response.content)
+    assert len(submissions_list) == 2
+    assert submissions_list[0] == submission_response_1
+    assert submissions_list[1] == submission_response_2
 
 
+def test_getting_submission_of_form_of_other_user():
+    # create new test user
+    test_user = {
+        "email"   : "test_user@mycompany.com" + uuid.uuid4().hex,
+        "name"    : "test_user",
+        "password": "test_password" + uuid.uuid4().hex
+    }
+    signup_response = requests.request(
+        "POST", BASE_URL + "/auth/signup", headers=headers, data=json.dumps(test_user)
+        )
+    assert signup_response.status_code == http.HTTPStatus.CREATED
+    
+    # get form as new test user
+    form_id = formResponse['form_id']
+    url = BASE_URL + "/api/users/forms/submissions?form_id=" + form_id
+
+    submission_response = requests.request(
+        "GET", url, headers=headers, 
+        auth=HTTPBasicAuth(test_user["email"], test_user["password"])
+    )
+    assert submission_response.status_code == http.HTTPStatus.FORBIDDEN
+    
+    # delete user
+    requests.delete(
+        BASE_URL + "/api/users/me",
+        auth=HTTPBasicAuth(test_user["email"], test_user["password"])
+    )
+ 
+   
+def test_getting_submission_list_of_non_existing_form():
+    non_existing_form_id = str(uuid.uuid1())
+    url = BASE_URL + "/api/users/forms/submissions?form_id=" + non_existing_form_id
+    response = requests.request("GET", 
+                                url, 
+                                headers=headers, 
+                                auth=HTTPBasicAuth(signup_payload["email"], signup_payload["password"])
+                                )
+    assert response.status_code == http.HTTPStatus.NOT_FOUND
+    
 
 
 # todo: delete all data being created here

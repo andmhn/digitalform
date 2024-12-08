@@ -2,6 +2,7 @@ package com.github.andmhn.digitalform.forms;
 
 import com.github.andmhn.digitalform.forms.dto.FormRequest;
 import com.github.andmhn.digitalform.forms.dto.FormResponse;
+import com.github.andmhn.digitalform.forms.dto.SubmissionResponse;
 import com.github.andmhn.digitalform.security.CustomUserDetails;
 import com.github.andmhn.digitalform.users.User;
 import com.github.andmhn.digitalform.users.UserService;
@@ -13,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
@@ -51,5 +53,15 @@ public class UserFormController {
         User user = userService.getValidUserWithEmail(currentUser.getEmail());
         List<FormResponse> userForms = formService.getAllUserFormsData(user);
         return ResponseEntity.ok(userForms);
+    }
+
+    @GetMapping("/submissions")
+    @ResponseStatus(HttpStatus.OK)
+    public List<SubmissionResponse> getAllSubmissions(
+            @AuthenticationPrincipal CustomUserDetails currentUser,
+            @RequestParam UUID form_id
+    ){
+        User user = userService.getValidUserWithEmail(currentUser.getEmail());
+        return formService.getAllSubmissionsOfForm(user, form_id);
     }
 }
