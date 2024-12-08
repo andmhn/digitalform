@@ -1,9 +1,11 @@
 package com.github.andmhn.digitalform.forms;
 
+import com.github.andmhn.digitalform.exeptions.ForbiddenException;
 import com.github.andmhn.digitalform.exeptions.NotFoundException;
 import com.github.andmhn.digitalform.forms.dto.FormRequest;
 import com.github.andmhn.digitalform.forms.dto.FormResponse;
 import com.github.andmhn.digitalform.forms.dto.QuestionRequest;
+import com.github.andmhn.digitalform.forms.dto.SubmissionResponse;
 import com.github.andmhn.digitalform.users.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +24,7 @@ public class FormService {
     private final QuestionRepository questionRepository;
 
     private List<Question> saveQuestions(List<QuestionRequest> questionRequest) {
-        List<Question> mappedQuestions = questionRequest.stream().map(Mapper::fromQuestionRequest).toList();
-        //return questionRepository.saveAll(mappedQuestions);
-        return mappedQuestions;
+        return questionRequest.stream().map(Mapper::fromQuestionRequest).toList();
     }
 
     public Form saveFormRequestForUser(FormRequest formRequest, User user) {
@@ -68,5 +68,15 @@ public class FormService {
         FormResponse savedForm = formRepository.findByIdDTO(formId)
                 .orElseThrow(() -> new NotFoundException("No Such Form with submission_id: " + formId));
         return injectQuestions(savedForm);
+    }
+
+    public List<SubmissionResponse> getAllSubmissionsOfForm(User currentUser, UUID form_id) {
+        Form form = formRepository.findById(form_id).orElseThrow(() -> new NotFoundException("No Such form"));
+        User formUser = form.getUser();
+        if (currentUser != formUser) {
+            throw new ForbiddenException("User doesn't own form");
+        }
+        List<Submission> submissions = form.getSubmissions();
+        return submissions.stream().map(Mapper::toSubmissionResponse).toList();
     }
 }
