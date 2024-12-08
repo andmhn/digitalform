@@ -1,8 +1,11 @@
 package com.github.andmhn.digitalform.forms;
 
+import com.github.andmhn.digitalform.forms.dto.AnswerRequest;
 import com.github.andmhn.digitalform.forms.dto.FormResponse;
+import com.github.andmhn.digitalform.forms.dto.SubmissionResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +18,9 @@ import java.util.UUID;
 public class PublicFormController {
     @Autowired
     private final FormService formService;
+
+    @Autowired
+    private final SubmissionService submissionService;
 
     @GetMapping
     public ResponseEntity<FormResponse> getFormById(@RequestParam UUID id) {
@@ -34,5 +40,9 @@ public class PublicFormController {
         return ResponseEntity.ok(publicForms);
     }
 
-    // TODO: handle submission here
+    @PostMapping("/submit")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public SubmissionResponse handleSubmission(@RequestParam UUID form_id, @RequestBody List<AnswerRequest> answers) {
+        return submissionService.handleSubmissionOfForm(form_id, answers);
+    }
 }

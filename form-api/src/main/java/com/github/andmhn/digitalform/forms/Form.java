@@ -24,15 +24,15 @@ public class Form {
     private String description;
     private Boolean unlisted;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_email", referencedColumnName = "email")
     private User user;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "fk_form", referencedColumnName = "id")
     private List<Question> questions;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "fk_form", referencedColumnName = "id")
     private List<Submission> submissions;
 }

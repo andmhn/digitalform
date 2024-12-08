@@ -6,7 +6,7 @@ import java.util.List;
 
 @Builder
 public record QuestionResponse (
-        Long         id,
+        Long         question_id,
         String       query,
         boolean      required,
         String       type,

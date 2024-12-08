@@ -24,11 +24,11 @@ public class Question {
     private String type;
     private List<String> choices;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_form", referencedColumnName = "id")
     private Form form;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "fk_question", referencedColumnName = "id")
     private List<Answer> answers;
 }

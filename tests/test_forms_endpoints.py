@@ -54,7 +54,7 @@ def test_creation_of_form():
     assert response.status_code == http.HTTPStatus.CREATED
     global formResponse 
     formResponse = json.loads(response.content)
-    assert formResponse['id'] != None
+    assert formResponse['form_id'] != None
     assert formResponse['header'] == formData["header"]
     
 
@@ -69,11 +69,11 @@ def test_creation_of_form_without_credential():
 
 def test_get_form_by_id():
     response = requests.get(
-        BASE_URL + "/api/public/forms?id=" + formResponse['id'],
+        BASE_URL + "/api/public/forms?id=" + formResponse['form_id'],
         headers= headers
     )
     assert response.status_code == http.HTTPStatus.OK
-    assert json.loads(response.content)['id'] == formResponse['id']
+    assert json.loads(response.content)['form_id'] == formResponse['form_id']
     assert json.loads(response.content) == formResponse
     
 def test_getting_user_forms_data():
@@ -83,7 +83,7 @@ def test_getting_user_forms_data():
         headers= headers
     )
     assert response.status_code == http.HTTPStatus.OK
-    assert json.loads(response.content)[0]['id'] == formResponse['id']
+    assert json.loads(response.content)[0]['form_id'] == formResponse['form_id']
     assert json.loads(response.content)[0] == formResponse
     
     
@@ -94,7 +94,7 @@ def test_getting_user_forms_info():
         headers= headers
     )
     assert response.status_code == http.HTTPStatus.OK
-    assert json.loads(response.content)[0]['id'] == formResponse['id']
+    assert json.loads(response.content)[0]['form_id'] == formResponse['form_id']
     assert json.loads(response.content)[0] != formResponse
     
 
@@ -109,6 +109,110 @@ def test_get_public_forms_data_and_info():
         headers= headers
     )
     assert response.status_code == http.HTTPStatus.OK
+
+
+def test_submission_of_form():
+    form_id = formResponse['form_id']
+    url = BASE_URL + "/api/public/forms/submit?form_id=" + form_id
+    submission = [
+      {
+        "question_id": formResponse['questions'][0]['question_id'],
+        "answer": "Lana Del Rey"
+      },
+      {
+        "question_id": formResponse['questions'][1]['question_id'],
+        "answer": "39"
+      },
+      {
+        "question_id": formResponse['questions'][2]['question_id'],
+        "answer": "female"
+      }
+    ]
+    response = requests.post(url, headers=headers, data=json.dumps(submission))
+
+    assert response.status_code == http.HTTPStatus.ACCEPTED
+    
+    submissionResponse = json.loads(response.content)
+    assert submissionResponse['submission_id'] != None
+    assert submissionResponse['formId'] == form_id
+    
+    for i in range(len(submission)):
+        assert submissionResponse['answers'][i]['answer_id'] != None
+        assert submissionResponse['answers'][i]['question_id'] == submission[i]['question_id']
+        assert submissionResponse['answers'][i]['answer'] == submission[i]['answer']
+
+  
+def test_submission_of_form_with_required_answers():
+    form_id = formResponse['form_id']
+    url = BASE_URL + "/api/public/forms/submit?form_id=" + form_id
+    submission = [
+      {
+        "question_id": formResponse['questions'][0]['question_id'],
+        "answer": "Lana Del Rey"
+      },
+      {
+        "question_id": formResponse['questions'][2]['question_id'],
+        "answer": "female"
+      }
+    ]
+    response = requests.post(url, headers=headers, data=json.dumps(submission))
+    assert response.status_code == http.HTTPStatus.ACCEPTED
+    
+    submissionResponse = json.loads(response.content)
+    
+    for i in range(0, 2, 2):
+        assert submissionResponse['answers'][i]['answer_id'] != None
+        assert submissionResponse['answers'][i]['question_id'] == submission[i]['question_id']
+        assert submissionResponse['answers'][i]['answer'] == submission[i]['answer']
+
+  
+
+def test_submission_of_form_without_required_answers():
+    form_id = formResponse['form_id']
+    url = BASE_URL + "/api/public/forms/submit?form_id=" + form_id
+    submission = [
+      {
+        "question_id": formResponse['questions'][0]['question_id'],
+        "answer": "Lana Del Rey"
+      },
+      {
+        "question_id": formResponse['questions'][1]['question_id'],
+        "answer": "39"
+      }
+    ]
+    response = requests.post(url, headers=headers, data=json.dumps(submission))
+
+    assert response.status_code == http.HTTPStatus.BAD_REQUEST
+    
+
+def test_submission_of_form_with_additional_answer():
+    form_id = formResponse['form_id']
+    url = BASE_URL + "/api/public/forms/submit?form_id=" + form_id
+    submission = [
+      {
+        "question_id": formResponse['questions'][0]['question_id'],
+        "answer": "Lana Del Rey"
+      },
+      {
+        "question_id": formResponse['questions'][1]['question_id'],
+        "answer": "39"
+      },
+      {
+        "question_id": formResponse['questions'][2]['question_id'],
+        "answer": "female"
+      },
+      {
+        "question_id": 101,
+        "answer": "redundant data"
+      }
+    ]
+    response = requests.post(url, headers=headers, data=json.dumps(submission))
+
+    assert response.status_code == http.HTTPStatus.BAD_REQUEST
+    
+
+
+
 
 
 # todo: delete all data being created here

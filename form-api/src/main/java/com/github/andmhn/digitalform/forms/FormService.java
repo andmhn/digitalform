@@ -23,7 +23,8 @@ public class FormService {
 
     private List<Question> saveQuestions(List<QuestionRequest> questionRequest) {
         List<Question> mappedQuestions = questionRequest.stream().map(Mapper::fromQuestionRequest).toList();
-        return questionRepository.saveAll(mappedQuestions);
+        //return questionRepository.saveAll(mappedQuestions);
+        return mappedQuestions;
     }
 
     public Form saveFormRequestForUser(FormRequest formRequest, User user) {
@@ -41,7 +42,7 @@ public class FormService {
     private FormResponse injectQuestions(FormResponse formResponse) {
         formResponse.setQuestions(
                 questionRepository.getAllByFormDTO(
-                        Form.builder().id(formResponse.getId()).build()
+                        Form.builder().id(formResponse.getForm_id()).build()
                 )
         );
         return formResponse;
@@ -65,7 +66,7 @@ public class FormService {
 
     public FormResponse getById(UUID formId) throws NotFoundException {
         FormResponse savedForm = formRepository.findByIdDTO(formId)
-                .orElseThrow(() -> new NotFoundException("No Such Form with id: " + formId));
+                .orElseThrow(() -> new NotFoundException("No Such Form with submission_id: " + formId));
         return injectQuestions(savedForm);
     }
 }

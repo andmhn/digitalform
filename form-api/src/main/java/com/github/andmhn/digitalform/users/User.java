@@ -26,4 +26,8 @@ public class User {
     private String name;
     private String email;
     private String password;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "owner_email", referencedColumnName = "email")
+    private List<Form> forms;
 }
