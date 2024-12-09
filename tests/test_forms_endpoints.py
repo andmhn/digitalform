@@ -1,4 +1,3 @@
-# return form response dto
 from http.client import CREATED
 from time import sleep
 import requests
@@ -252,12 +251,7 @@ def test_getting_submission_of_form_of_other_user():
         auth=HTTPBasicAuth(test_user["email"], test_user["password"])
     )
     assert submission_response.status_code == http.HTTPStatus.FORBIDDEN
-    
-    # delete user
-    requests.delete(
-        BASE_URL + "/api/users/me",
-        auth=HTTPBasicAuth(test_user["email"], test_user["password"])
-    )
+    delete_user(test_user["email"], test_user["password"])
  
    
 def test_getting_submission_list_of_non_existing_form():
@@ -271,5 +265,12 @@ def test_getting_submission_list_of_non_existing_form():
     assert response.status_code == http.HTTPStatus.NOT_FOUND
     
 
+def test_delete_test_data_by_removing_user():
+    delete_user(signup_payload["email"], signup_payload["password"])
 
-# todo: delete all data being created here
+def delete_user(email: str, password: str):
+    response = requests.delete(
+        BASE_URL + "/api/users/me",
+            auth=HTTPBasicAuth(email, password)
+    )
+    assert response.status_code == http.HTTPStatus.OK

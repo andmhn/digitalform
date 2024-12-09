@@ -22,19 +22,19 @@ public class SubmissionService {
 
     public SubmissionResponse handleSubmissionOfForm(UUID form_id, List<AnswerRequest> answers){
         Form currentForm = formRepository.findById(form_id).orElseThrow(() -> new NotFoundException("No Such Form: " + form_id));
+        Submission submission = groupAnswersAsSubmission(answers, currentForm);
+        submission = submissionRepository.save(submission);
+        return Mapper.toSubmissionResponse(submission);
+    }
 
+    private static Submission groupAnswersAsSubmission(List<AnswerRequest> answers, Form currentForm) {
         List<Question> allQuestionsInForm = currentForm.getQuestions();
         checkForRequiredAnswersOrThrow(answers, allQuestionsInForm);
 
         List <Answer> answerList = injectQuestionIdToAnswer(allQuestionsInForm, answers);
-
-        Submission submission = Submission.builder()
+        return Submission.builder()
                 .form(currentForm)
                 .answers(answerList).build();
-
-        submission = submissionRepository.save(submission);
-
-        return Mapper.toSubmissionResponse(submission);
     }
 
     private static List<Answer> injectQuestionIdToAnswer(List<Question> allQuestionInForm, List<AnswerRequest> answers) {
