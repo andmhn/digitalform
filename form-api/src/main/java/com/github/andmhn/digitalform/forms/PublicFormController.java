@@ -23,8 +23,8 @@ public class PublicFormController {
     private final SubmissionService submissionService;
 
     @GetMapping
-    public ResponseEntity<FormResponse> getFormById(@RequestParam UUID id) {
-        FormResponse form = formService.getById(id);
+    public ResponseEntity<FormResponse> getFormById(@RequestParam UUID form_id) {
+        FormResponse form = formService.getById(form_id);
         return ResponseEntity.ok(form);
     }
 

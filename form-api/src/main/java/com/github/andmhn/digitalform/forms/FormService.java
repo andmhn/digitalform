@@ -2,15 +2,20 @@ package com.github.andmhn.digitalform.forms;
 
 import com.github.andmhn.digitalform.exeptions.ForbiddenException;
 import com.github.andmhn.digitalform.exeptions.NotFoundException;
+import com.github.andmhn.digitalform.exeptions.UnauthorizedException;
 import com.github.andmhn.digitalform.forms.dto.FormRequest;
 import com.github.andmhn.digitalform.forms.dto.FormResponse;
 import com.github.andmhn.digitalform.forms.dto.QuestionRequest;
 import com.github.andmhn.digitalform.forms.dto.SubmissionResponse;
 import com.github.andmhn.digitalform.users.User;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.List;
 import java.util.UUID;
 
@@ -71,12 +76,41 @@ public class FormService {
     }
 
     public List<SubmissionResponse> getAllSubmissionsOfForm(User currentUser, UUID form_id) {
+        Form form = getFormIfUserOwnsIt(currentUser, form_id);
+        List<Submission> submissions = form.getSubmissions();
+        return submissions.stream().map(Mapper::toSubmissionResponse).toList();
+    }
+
+    public Form getFormIfUserOwnsIt(User currentUser, UUID form_id) {
         Form form = formRepository.findById(form_id).orElseThrow(() -> new NotFoundException("No Such form"));
         User formUser = form.getUser();
         if (currentUser != formUser) {
             throw new ForbiddenException("User doesn't own form");
         }
-        List<Submission> submissions = form.getSubmissions();
-        return submissions.stream().map(Mapper::toSubmissionResponse).toList();
+        return form;
+    }
+
+    public void delete_form(User user, UUID form_id) throws UnauthorizedException {
+        Form form = getFormIfUserOwnsIt(user, form_id);
+        formRepository.delete(form);
+    }
+
+    public void writeFormResponses(Form form, Writer writer) throws IOException {
+        CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT);
+        List<Question> formQuestions = form.getQuestions();
+        List<String> questionHeaders = formQuestions.stream().map(Question::getQuery).toList();
+        printer.printRecord(questionHeaders);
+
+        for (Submission submission : form.getSubmissions()) {
+            for (Question currentQuestion : formQuestions) {
+                String answerForQuestion = submission.getAnswers().stream()
+                        .filter(answer -> answer.getQuestion().equals(currentQuestion))
+                        .map(Answer::getAnswer)
+                        .findFirst()
+                        .orElse("");
+                printer.print(answerForQuestion);
+            }
+            printer.println();
+        }
     }
 }

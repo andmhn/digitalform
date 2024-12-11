@@ -6,6 +6,7 @@ import com.github.andmhn.digitalform.forms.dto.SubmissionResponse;
 import com.github.andmhn.digitalform.security.CustomUserDetails;
 import com.github.andmhn.digitalform.users.User;
 import com.github.andmhn.digitalform.users.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
@@ -60,8 +64,35 @@ public class UserFormController {
     public List<SubmissionResponse> getAllSubmissions(
             @AuthenticationPrincipal CustomUserDetails currentUser,
             @RequestParam UUID form_id
-    ){
+    ) {
         User user = userService.getValidUserWithEmail(currentUser.getEmail());
         return formService.getAllSubmissionsOfForm(user, form_id);
+    }
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteForm(
+            @AuthenticationPrincipal CustomUserDetails currentUser,
+            @RequestParam UUID form_id
+    ) {
+        User user = userService.getValidUserWithEmail(currentUser.getEmail());
+        formService.delete_form(user, form_id);
+    }
+
+    @GetMapping("/export")
+    public void exportIntoCSV(HttpServletResponse response,
+                              @AuthenticationPrincipal CustomUserDetails currentUser,
+                              @RequestParam UUID form_id
+    ) throws IOException {
+        User validUserWithEmail = userService.getValidUserWithEmail(currentUser.getEmail());
+        Form form = formService.getFormIfUserOwnsIt(validUserWithEmail, form_id);
+
+        String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"));
+        response.setContentType("text/csv");
+        response.addHeader(
+                "Content-Disposition",
+                "attachment; filename=\"" + form.getHeader() + " [" + currentTime + "].csv\""
+        );
+        formService.writeFormResponses(form, response.getWriter());
     }
 }
