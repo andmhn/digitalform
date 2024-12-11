@@ -231,18 +231,7 @@ def test_getting_submission_list_of_form():
 
 
 def test_should_fail_getting_submission_of_form_of_other_user():
-    # create new test user
-    test_user = {
-        "email"   : "test_user@mycompany.com" + uuid.uuid4().hex,
-        "name"    : "test_user",
-        "password": "test_password" + uuid.uuid4().hex
-    }
-    signup_response = requests.request(
-        "POST", BASE_URL + "/auth/signup", headers=headers, data=json.dumps(test_user)
-        )
-    assert signup_response.status_code == http.HTTPStatus.CREATED
-    
-    # get form as new test user
+    test_user = create_new_user()
     form_id = formResponse['form_id']
     url = BASE_URL + "/api/users/forms/submissions?form_id=" + form_id
 
@@ -263,18 +252,27 @@ def test_should_fail_getting_submission_list_of_non_existing_form():
                                 auth=HTTPBasicAuth(signup_payload["email"], signup_payload["password"])
                                 )
     assert response.status_code == http.HTTPStatus.NOT_FOUND
+  
+
+def test_should_not_delete_submission_as_other_user():
+    test_user = create_new_user()
+    response = requests.delete(
+        BASE_URL + "/api/users/forms/submit/" + str(submission_response_1['submission_id']),
+        auth=HTTPBasicAuth(test_user["email"], test_user["password"])
+    )
+    assert response.status_code == http.HTTPStatus.UNAUTHORIZED
+
+
+def test_should_delete_submission_as_form_owner():
+    response = requests.delete(
+        BASE_URL + "/api/users/forms/submit/" + str(submission_response_1['submission_id']),
+        auth=HTTPBasicAuth(signup_payload["email"], signup_payload["password"])
+    )
+    assert response.status_code == http.HTTPStatus.OK
+   
 
 def test_should_not_delete_form_as_non_owner():
-    # create new test user
-    test_user = {
-        "email"   : "test_user@mycompany.com" + uuid.uuid4().hex,
-        "name"    : "test_user",
-        "password": "test_password" + uuid.uuid4().hex
-    }
-    requests.request(
-        "POST", BASE_URL + "/auth/signup", headers=headers, data=json.dumps(test_user)
-    )
-    # test
+    test_user = create_new_user()
     response = requests.delete(
         BASE_URL + "/api/users/forms?form_id=" + formResponse['form_id'],
         auth=HTTPBasicAuth(test_user["email"], test_user["password"])
@@ -295,10 +293,24 @@ def test_should_delete_form_as_owner():
         BASE_URL + "/api/public/forms?form_id=" + formResponse['form_id']
     )
     assert response.status_code == http.HTTPStatus.NOT_FOUND
-    
+ 
 
 def test_delete_test_data_by_removing_user():
     delete_user(signup_payload["email"], signup_payload["password"])
+
+
+def create_new_user() -> dict[str,str] :
+    # create new test user
+    test_user = {
+        "email"   : "test_user@mycompany.com" + uuid.uuid4().hex,
+        "name"    : "test_user",
+        "password": "test_password" + uuid.uuid4().hex
+    }
+    response = requests.request(
+        "POST", BASE_URL + "/auth/signup", headers=headers, data=json.dumps(test_user)
+    )
+    assert response.status_code == http.HTTPStatus.CREATED
+    return test_user
 
 
 def delete_user(email: str, password: str):
