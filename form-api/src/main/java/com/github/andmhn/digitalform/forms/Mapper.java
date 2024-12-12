@@ -43,7 +43,7 @@ public class Mapper {
     public static SubmissionResponse toSubmissionResponse(Submission submission) {
         return SubmissionResponse.builder()
                 .submission_id(submission.getId())
-                .formId(submission.getForm().getId())
+                .form_id(submission.getForm().getId())
                 .answers(submission.getAnswers().stream().map(Mapper::toAnswerResponse).toList())
                 .build();
     }

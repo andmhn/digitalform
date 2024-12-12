@@ -20,6 +20,14 @@ public class SubmissionService {
     @Autowired
     private final FormRepository formRepository;
 
+    public Submission getSubmission(Long id) {
+        return submissionRepository.findById(id).orElseThrow(() -> new NotFoundException("No such Submission: " + id) );
+    }
+
+    public void deleteSubmission(Submission submission) {
+        submissionRepository.delete(submission);
+    }
+
     public SubmissionResponse handleSubmissionOfForm(UUID form_id, List<AnswerRequest> answers){
         Form currentForm = formRepository.findById(form_id).orElseThrow(() -> new NotFoundException("No Such Form: " + form_id));
         Submission submission = groupAnswersAsSubmission(answers, currentForm);

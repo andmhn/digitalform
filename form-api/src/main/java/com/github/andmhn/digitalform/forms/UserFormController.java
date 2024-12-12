@@ -1,5 +1,6 @@
 package com.github.andmhn.digitalform.forms;
 
+import com.github.andmhn.digitalform.exeptions.UnauthorizedException;
 import com.github.andmhn.digitalform.forms.dto.FormRequest;
 import com.github.andmhn.digitalform.forms.dto.FormResponse;
 import com.github.andmhn.digitalform.forms.dto.SubmissionResponse;
@@ -29,6 +30,9 @@ public class UserFormController {
 
     @Autowired
     private final UserService userService;
+
+    @Autowired
+    private final SubmissionService submissionService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -94,5 +98,19 @@ public class UserFormController {
                 "attachment; filename=\"" + form.getHeader() + " [" + currentTime + "].csv\""
         );
         formService.writeFormResponses(form, response.getWriter());
+    }
+
+    @DeleteMapping("/submit/{submissionId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteSubmission(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @PathVariable Long submissionId
+    ){
+        User currentUser = userService.getValidUserWithEmail(customUserDetails.getEmail());
+        Submission submission = submissionService.getSubmission(submissionId);
+        User formOwner = submission.getForm().getUser();
+        if (formOwner != currentUser)
+            throw new UnauthorizedException("User Is Not Owner Of Form");
+        submissionService.deleteSubmission(submission);
     }
 }

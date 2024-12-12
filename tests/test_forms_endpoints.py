@@ -135,7 +135,7 @@ def test_submission_of_form():
     
     submissionResponse = json.loads(response.content)
     assert submissionResponse['submission_id'] != None
-    assert submissionResponse['formId'] == form_id
+    assert submissionResponse['form_id'] == form_id
     
     for i in range(len(submission)):
         assert submissionResponse['answers'][i]['answer_id'] != None
@@ -261,6 +261,7 @@ def test_should_not_delete_submission_as_other_user():
         auth=HTTPBasicAuth(test_user["email"], test_user["password"])
     )
     assert response.status_code == http.HTTPStatus.UNAUTHORIZED
+    delete_user(test_user["email"], test_user["password"])
 
 
 def test_should_delete_submission_as_form_owner():
@@ -300,7 +301,6 @@ def test_delete_test_data_by_removing_user():
 
 
 def create_new_user() -> dict[str,str] :
-    # create new test user
     test_user = {
         "email"   : "test_user@mycompany.com" + uuid.uuid4().hex,
         "name"    : "test_user",

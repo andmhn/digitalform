@@ -10,6 +10,6 @@ import java.util.UUID;
 @Data
 public class SubmissionResponse {
     Long submission_id;
-    UUID formId;
+    UUID form_id;
     List<AnswerResponse> answers;
 }
