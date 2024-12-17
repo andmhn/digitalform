@@ -1,0 +1,25 @@
+<div class="card" style="position: sticky; top: 0;">
+    <p-menubar autoHide=true [model]="items">
+        <ng-template #start>
+            <a routerLink="/">
+                <p-avatar image="/favicon.ico" shape="circle" />
+            </a>
+        </ng-template>
+        <ng-template #item let-item let-root="root">
+            <a pRipple class="flex items-center p-menubar-item-link" routerLink="{{item.href}}">
+                <span>{{ item.label }}</span>
+            </a>
+        </ng-template>
+        <ng-template #end>
+            <div class="flex items-center p-menubar-item-link">
+                @if(authService.currentUser() === null){
+                <p-button routerLink="/login">login</p-button>
+                }
+                @else if(authService.currentUser()) {
+                <div>Hello {{authService.currentUser()?.name}}</div>
+                <p-button (click)="logout()">logout</p-button>
+                }
+            </div>
+        </ng-template>
+    </p-menubar>
+</div>
