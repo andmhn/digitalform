@@ -1,0 +1,10 @@
+<p-card header="Set Up A Account" [style]="{width: '25rem', overflow: 'hidden'}">
+    <form [formGroup]="signupForm">
+        <input pInputText type="text" formControlName="name" placeholder="Full Name" />
+        <input pInputText type="email" formControlName="email" placeholder="Email" />
+        <p-password formControlName="password" placeholder="Password" [feedback]="false"  [toggleMask]="true" />
+        
+        <p-button type="submit" [disabled]="!signupForm.valid"  (click)="signup()">Signup</p-button>
+    </form>
+    <p>Already have account <a routerLink="/login">Login instead</a></p>
+</p-card>
