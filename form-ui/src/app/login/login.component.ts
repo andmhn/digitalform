@@ -6,7 +6,7 @@ import { Button } from 'primeng/button';
 import { Card } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from "primeng/password";
-import { AuthService } from '../auth.service';
+import { UserService } from '../auth.service';
 
 @Component({
   selector: 'app-login',
@@ -21,10 +21,10 @@ export class LoginComponent {
       password: new FormControl('', Validators.required),
     });
   
-  authService = inject(AuthService);
+  userService = inject(UserService);
 
   login(){
-    this.authService.login({
+    this.userService.login({
       email: String(this.loginForm.value.email),
       password: String(this.loginForm.value.password)
     });

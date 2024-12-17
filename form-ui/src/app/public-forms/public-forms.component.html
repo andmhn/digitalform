@@ -1,1 +1,8 @@
-<p>public-forms works!</p>
+<p>List Of Public Forms:</p>  
+<div  class="flex-grid">
+    @for (form of formPreviews; track form.form_id) {
+    <div style="padding: 10px;">
+        <app-form-preview [formPreview]="form"/>
+    </div>
+    }
+</div>

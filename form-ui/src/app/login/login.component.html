@@ -1,9 +1,11 @@
-<p-card header="Enter Credentials" [style]="{width: '25rem', overflow: 'hidden'}">
-    <form [formGroup]="loginForm">
-        <input pInputText type="email" formControlName="email" placeholder="Email" />
-        <p-password formControlName="password" placeholder="Password" [feedback]="false"  [toggleMask]="true" />
-        
-        <p-button type="submit" [disabled]="!loginForm.valid"  (click)="login()">Login</p-button>
-    </form>
-    <p>don't have account <a routerLink="/signup">signup instead</a></p>
-</p-card>
+<div style="display: flex; justify-content: center;">
+    <p-card header="Enter Credentials" [style]="{width: '25rem', overflow: 'hidden'}">
+        <form [formGroup]="loginForm">
+            <input pInputText type="email" formControlName="email" placeholder="Email" />
+            <p-password formControlName="password" placeholder="Password" [feedback]="false" [toggleMask]="true" />
+
+            <p-button type="submit" [disabled]="!loginForm.valid" (click)="login()">Login</p-button>
+        </form>
+        <p>don't have account <a routerLink="/signup">signup instead</a></p>
+    </p-card>
+</div>

@@ -6,7 +6,7 @@ import { Button } from 'primeng/button';
 import { Card } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
-import { AuthService } from '../auth.service';
+import { UserService } from '../auth.service';
 
 @Component({
   selector: 'app-signup',
@@ -22,10 +22,10 @@ export class SignupComponent {
     password: new FormControl('', Validators.required),
   });
 
-  authService = inject(AuthService);
+  userService = inject(UserService);
 
   signup(){
-    this.authService.signup({
+    this.userService.signup({
       name: String(this.signupForm.value.name),
       email: String(this.signupForm.value.email),
       password: String(this.signupForm.value.password)

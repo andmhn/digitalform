@@ -12,11 +12,11 @@
         </ng-template>
         <ng-template #end>
             <div class="flex items-center p-menubar-item-link">
-                @if(authService.currentUser() === null){
+                @if(userService.currentUser() === null){
                 <p-button routerLink="/login">login</p-button>
                 }
-                @else if(authService.currentUser()) {
-                <div>Hello {{authService.currentUser()?.name}}</div>
+                @else if(userService.currentUser()) {
+                <div>Hello {{userService.currentUser()?.name}}</div>
                 <p-button (click)="logout()">logout</p-button>
                 }
             </div>

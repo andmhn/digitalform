@@ -1,1 +1,24 @@
-<p><i class="pi pi-check"></i> home works!</p>
+<h1><i class="pi pi-check"></i> home works!</h1>
+
+@if (userService.currentUser()) {
+<p>List Of User Forms:</p>  
+<div  class="flex-grid">
+    @for (form of userforms; track form.form_id) {
+    <div style="padding: 10px;">
+        <app-form-preview [formPreview]="form"/>
+    </div>
+    }
+</div>
+} @else {
+    <p>Login To View Your Forms!</p>
+}
+<br>
+
+<p>List Of Public Forms:</p>  
+<div  class="flex-grid">
+    @for (form of publicforms; track form.form_id) {
+    <div style="padding: 10px;">
+        <app-form-preview [formPreview]="form"/>
+    </div>
+    }
+</div>

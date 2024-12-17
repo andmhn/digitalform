@@ -8,7 +8,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { Menubar } from 'primeng/menubar';
 import { Ripple } from 'primeng/ripple';
-import { AuthService } from '../auth.service';
+import { UserService } from '../auth.service';
 
 @Component({
   selector: 'app-menu-bar',
@@ -21,7 +21,7 @@ export class MenuBarComponent implements OnInit {
     isLoggedIn:boolean = false;
     items: MenuItem[] | undefined;
     
-    authService = inject(AuthService);
+    userService = inject(UserService);
     
     ngOnInit() {
         this.items = [
@@ -39,6 +39,6 @@ export class MenuBarComponent implements OnInit {
     }
 
     logout() {
-        this.authService.logout();
+        this.userService.logout();
     }
 }

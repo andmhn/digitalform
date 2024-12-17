@@ -1,0 +1,22 @@
+<p>form-view works!</p>
+@if(error){
+    <p-message severity="error" variant="outlined" closable>
+        <p>{{error.error}}</p> <p>{{error.message}}</p>
+    </p-message>
+}
+
+<h1>{{formData?.header}}</h1>
+<h2>{{formData?.description}}</h2>
+
+@for (form of formData?.questions; track $index) {
+    <br>
+    <h3>Question {{$index + 1}}.</h3>
+    <p><b>query: </b>{{form.query}}</p>
+    <p><b>type: </b>{{form.type}}</p>
+    
+    @if(form?.choices){
+        @for(choice of form?.choices; track $index){
+            <p><b>{{$index + 1}}. </b>{{choice}}</p>
+        }
+    }
+}

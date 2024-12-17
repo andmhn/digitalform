@@ -3,6 +3,7 @@ import { SignupComponent } from './signup/signup.component';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { PublicFormsComponent } from './public-forms/public-forms.component';
+import { FormViewComponent } from './form-view/form-view.component';
 
 export const routes: Routes = [
     {
@@ -25,4 +26,8 @@ export const routes: Routes = [
         component: PublicFormsComponent,
         title: 'Public - Digital Form',
     },
+    {
+        path: 'forms/:id',
+        component: FormViewComponent
+    }
 ];

@@ -71,7 +71,7 @@ public class FormService {
 
     public FormResponse getById(UUID formId) throws NotFoundException {
         FormResponse savedForm = formRepository.findByIdDTO(formId)
-                .orElseThrow(() -> new NotFoundException("No Such Form with submission_id: " + formId));
+                .orElseThrow(() -> new NotFoundException("No Such Form with form id: " + formId));
         return injectQuestions(savedForm);
     }
 

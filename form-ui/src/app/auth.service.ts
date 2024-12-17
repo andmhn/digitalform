@@ -8,7 +8,7 @@ export const baseUrl = 'http://localhost:8080';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class UserService {
   currentUser = signal<UserInterface | null>(null);
   http = inject(HttpClient);
   router = inject(Router);

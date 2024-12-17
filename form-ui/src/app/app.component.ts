@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MenuBarComponent } from './menu-bar/menu-bar.component';
-import { AuthService } from './auth.service';
+import { UserService } from './auth.service';
 
 @Component({
   selector: 'app-root',
@@ -12,9 +12,9 @@ import { AuthService } from './auth.service';
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit{
-  authService = inject(AuthService);
+  userService = inject(UserService);
   
   ngOnInit(): void {
-    this.authService.loginSavedUser();
+    this.userService.loginSavedUser();
   }
 }
