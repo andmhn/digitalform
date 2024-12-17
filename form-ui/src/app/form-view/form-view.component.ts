@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, inject, input, Input, OnInit } from '@angular/core';
-import { baseUrl } from '../auth.service';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { baseUrl } from '../user.service';
 import { Message } from 'primeng/message';
 
 export interface Question {

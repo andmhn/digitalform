@@ -6,7 +6,7 @@ import { Button } from 'primeng/button';
 import { Card } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
-import { UserService } from '../auth.service';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-signup',

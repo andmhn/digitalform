@@ -8,7 +8,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { Menubar } from 'primeng/menubar';
 import { Ripple } from 'primeng/ripple';
-import { UserService } from '../auth.service';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-menu-bar',
