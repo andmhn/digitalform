@@ -1,22 +1,43 @@
-<p>form-view works!</p>
 @if(error){
     <p-message severity="error" variant="outlined" closable>
-        <p>{{error.error}}</p> <p>{{error.message}}</p>
+        <p>{{error.error}}</p>
+        <p>{{error.message}}</p>
     </p-message>
 }
 
-<h1>{{formData?.header}}</h1>
-<h2>{{formData?.description}}</h2>
+@if(isSubmitted){
+    <p-message severity="success" variant="outlined">
+        <p>You have Successfully Submitted the Form</p>
+    </p-message>
+    <h3 style="cursor: pointer; color: skyblue;"><u><a (click)="showAgain()" >Submit Again</a></u></h3>
+}
 
-@for (form of formData?.questions; track $index) {
+@if(formData && isSubmitted === false) {
+    <p-card>
+        <ng-template pTemplate="title">
+            <h1>{{formData.header}}</h1>
+        </ng-template>
+        <h2>{{formData.description}}</h2>
+    </p-card>
     <br>
-    <h3>Question {{$index + 1}}.</h3>
-    <p><b>query: </b>{{form.query}}</p>
-    <p><b>type: </b>{{form.type}}</p>
+
+    <div [formGroup]="formInput">
+        @for (question of formData.questions; track $index) {
+            <p-card>
+                <ng-template pTemplate="title">
+                    <h3>{{$index + 1}}. {{question.query}} </h3>
+                </ng-template>
     
-    @if(form?.choices){
-        @for(choice of form?.choices; track $index){
-            <p><b>{{$index + 1}}. </b>{{choice}}</p>
+                <input type="text" pInputText formControlName="{{question.question_id}}" placeholder="{{question.type}}"/>            
+    
+                @if(question?.choices){
+                    @for(choice of question?.choices; track $index){
+                        <p><b>{{$index + 1}}. </b>{{choice}}</p>
+                    }
+                }
+            </p-card>
+        <br>
         }
-    }
+        <p-button type="submit" [disabled]="!formInput.valid" (click)="submit()">submit</p-button>
+    </div>
 }

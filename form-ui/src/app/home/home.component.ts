@@ -10,8 +10,7 @@ import { UserService, baseUrl } from '../user.service';
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
-export class HomeComponent implements OnInit {
-  publicforms: FormPreview[] = [];
+export class HomeComponent {
   userforms: FormPreview[] = [];
 
   http = inject(HttpClient)
@@ -24,10 +23,5 @@ export class HomeComponent implements OnInit {
           .subscribe(res => this.userforms = res);
       }
     });
-  }
-
-  ngOnInit(): void {
-    this.http.get<FormPreview[]>(baseUrl + "/api/public/forms/info")
-      .subscribe(res => this.publicforms = res);
   }
 }
