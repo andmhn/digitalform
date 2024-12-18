@@ -8,6 +8,13 @@ import { PrimeTemplate } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TextareaModule } from 'primeng/textarea';
+import { FloatLabel } from 'primeng/floatlabel';
+import { InputNumber } from 'primeng/inputnumber';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { RadioButton } from 'primeng/radiobutton';
+import { Checkbox } from 'primeng/checkbox';
+import { DatePicker } from 'primeng/datepicker';
 
 export interface Question {
   question_id: Number;
@@ -33,7 +40,7 @@ interface Answer {
 @Component({
   selector: 'app-form-view',
   standalone: true,
-  imports: [Message, Card, CommonModule, PrimeTemplate, Button, InputTextModule, FormsModule, ReactiveFormsModule],
+  imports: [Message, Card, CommonModule, PrimeTemplate, Button, InputTextModule, FormsModule, ReactiveFormsModule, TextareaModule, FloatLabel, InputNumber, MultiSelectModule, RadioButton, Checkbox, DatePicker],
   templateUrl: './form-view.component.html',
   styleUrl: './form-view.component.scss'
 })
@@ -66,7 +73,7 @@ export class FormViewComponent implements OnInit {
         const question_id = questions[index].question_id;
         answers.push({
           question_id: question_id,
-          answer: this.formInput.get(String(question_id))?.getRawValue()
+          answer: String(this.formInput.get(String(question_id))?.getRawValue())
         });
       }
       console.log(answers);
@@ -97,5 +104,6 @@ export class FormViewComponent implements OnInit {
           : new FormControl('')
       );
     }
+    this.formInput.reset();
   }
 }

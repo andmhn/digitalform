@@ -1,6 +1,7 @@
 import { Component, inject, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { Card } from 'primeng/card';
+import { Ripple } from 'primeng/ripple';
 
 export interface FormPreview {
   form_id :string;
@@ -12,7 +13,7 @@ export interface FormPreview {
 @Component({
   selector: 'app-form-preview',
   standalone: true,
-  imports: [Card],
+  imports: [Card, Ripple],
   templateUrl: './form-preview.component.html',
   styleUrl: './form-preview.component.scss'
 })

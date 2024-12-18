@@ -7,11 +7,12 @@ import { Card } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { UserService } from '../user.service';
+import { Message } from 'primeng/message';
 
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [Card, Button, InputTextModule, CommonModule, FormsModule, PasswordModule, RouterModule, ReactiveFormsModule],
+  imports: [Card, Button, InputTextModule, CommonModule, FormsModule, PasswordModule, RouterModule, ReactiveFormsModule, Message],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.scss'
 })

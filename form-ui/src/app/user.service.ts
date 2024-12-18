@@ -12,38 +12,35 @@ export class UserService {
   currentUser = signal<UserInterface | null>(null);
   http = inject(HttpClient);
   router = inject(Router);
+  error: any;
 
   constructor() {
   }
 
   signup(user: UserInterface) {
     this.http.post<AuthResponse>(baseUrl + '/auth/signup', user)
-    .subscribe(
-      res => {
-        this.updateUser(res, user.password)
-        this.router.navigateByUrl('/');
-      }
-    );
+      .subscribe({
+        next: res => this.updateUser(res, user.password),
+        error: e  => this.error = e.error
+      });
   }
 
-  login(user: {email: string, password: string}) {
+  login(user: { email: string, password: string }) {
     this.http.post<AuthResponse>(baseUrl + "/auth/authenticate", user)
-      .subscribe(
-        res => {
-          this.updateUser(res, user.password)
-          this.router.navigateByUrl('/');
-        }
-      );
+      .subscribe({
+        next:  res => this.updateUser(res, user.password),
+        error: e  => this.error = e.error
+      });
   }
 
   loginSavedUser() {
     let savedEmail = localStorage.getItem('email');
     let savedPassword = localStorage.getItem('password');
 
-    if(!savedEmail || !savedPassword)
+    if (!savedEmail || !savedPassword)
       return;
 
-    this.http.post<AuthResponse>(baseUrl + "/auth/authenticate", {email: savedEmail, password: savedPassword})
+    this.http.post<AuthResponse>(baseUrl + "/auth/authenticate", { email: savedEmail, password: savedPassword })
       .subscribe(
         res => {
           this.currentUser.set({
@@ -55,7 +52,7 @@ export class UserService {
       );
   }
 
-  logout(){
+  logout() {
     localStorage.removeItem('email');
     localStorage.removeItem('password');
     this.currentUser.set(null);
@@ -72,11 +69,13 @@ export class UserService {
       password: password
     };
     this.currentUser.set(newUser);
+    this.error = null;
+    this.router.navigateByUrl('/');
   }
 }
 
 interface AuthResponse {
   id: string;
-  email:string;
+  email: string;
   name: string;
 }

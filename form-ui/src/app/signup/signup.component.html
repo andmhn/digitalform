@@ -1,12 +1,21 @@
 <div style="display: flex; justify-content: center;">
     <p-card header="Set Up A Account" [style]="{width: '25rem', overflow: 'hidden'}">
         <form [formGroup]="signupForm">
-            <input pInputText type="text" formControlName="name" placeholder="Full Name" />
-            <input pInputText type="email" formControlName="email" placeholder="Email" />
-            <p-password formControlName="password" placeholder="Password" [toggleMask]="true" />
+            <input pInputText type="text" id="name" formControlName="name" placeholder="Full Name" autocomplete="name"/>
+            <input pInputText type="email" id="email" formControlName="email" placeholder="Email" autocomplete="email"/>
+            <p-password inputId="password" formControlName="password" placeholder="Password" [toggleMask]="true" />
 
             <p-button type="submit" [disabled]="!signupForm.valid" (click)="signup()">Signup</p-button>
         </form>
         <p>Already have account <a routerLink="/login">Login instead</a></p>
     </p-card>
 </div>
+
+@let err = userService.error;
+@if(err){
+    <br>
+    <p-message severity="error" variant="outlined" closable>
+        <p>{{err.error}}</p>
+        <p>{{err.message}}</p>
+    </p-message>
+}
