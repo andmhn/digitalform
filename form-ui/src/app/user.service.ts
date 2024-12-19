@@ -9,7 +9,7 @@ export const baseUrl = 'http://localhost:8080';
   providedIn: 'root'
 })
 export class UserService {
-  currentUser = signal<UserInterface | null>(null);
+  currentUser = signal<UserInterface | null | undefined>(undefined); // null means 'not logged in'
   http = inject(HttpClient);
   router = inject(Router);
   error: any;
@@ -37,8 +37,10 @@ export class UserService {
     let savedEmail = localStorage.getItem('email');
     let savedPassword = localStorage.getItem('password');
 
-    if (!savedEmail || !savedPassword)
+    if (!savedEmail || !savedPassword){
+      this.currentUser.set(null);
       return;
+    }
 
     this.http.post<AuthResponse>(baseUrl + "/auth/authenticate", { email: savedEmail, password: savedPassword })
       .subscribe(

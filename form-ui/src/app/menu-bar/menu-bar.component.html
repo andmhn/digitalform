@@ -13,11 +13,14 @@
         <ng-template #end>
             <div class="flex items-center p-menubar-item-link">
                 @if(userService.currentUser() === null){
-                <p-button routerLink="/login">login</p-button>
+                    <p-button routerLink="/login">login</p-button>
                 }
-                @else if(userService.currentUser()) {
-                <div>Hello {{userService.currentUser()?.name}}</div>
-                <p-button (click)="logout()">logout</p-button>
+                @else if (userService.currentUser() === undefined) {
+                    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+                }
+                @else{
+                    <div>Hello {{userService.currentUser()?.name}}</div>
+                    <p-button (click)="logout()">logout</p-button>
                 }
             </div>
         </ng-template>

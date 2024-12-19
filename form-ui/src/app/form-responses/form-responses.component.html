@@ -1,44 +1,42 @@
 @if(currentUserOwnsForm()){
-    @if(formData()){
-        <div>
-            <i (click)="export()" class="pi pi-download" style="font-size: 2rem; float: right; cursor: pointer;" pTooltip="export csv"></i>
-            <h1>{{formData()?.header}}</h1>
-            <h2>{{formData()?.description}}</h2>
+    <div>
+        <i (click)="export()" class="pi pi-download" style="font-size: 2rem; float: right; cursor: pointer;" pTooltip="export csv"></i>
+        <h1>{{formData()?.header}}</h1>
+        <h2>{{formData()?.description}}</h2>
+    </div>
+    <br>
+    <p-divider/>
+    <div>
+        <div style="float: right;">
+            response id:
+                <p-select (onChange)="changeFormInput()" [options]="submissions" [(ngModel)]="selectedSubmission" optionLabel="submission_id" placeholder="Select Submission Id" class="w-full md:w-56" />
         </div>
-        <br>
-        <p-divider/>
-        <div>
-            <div style="float: right;">
-                response id:
-                 <p-select (onChange)="changeFormInput()" [options]="submissions" [(ngModel)]="selectedSubmission" optionLabel="submission_id" placeholder="Select Submission Id" class="w-full md:w-56" />
+        <p>Available Responses:</p>
+    </div>
+    <br>
+    @if(selectedSubmission){
+        <div class="flex-center">
+            <div [formGroup]="formInput"  style="width: 100%; max-width: 900px;">
+                @for (question of formData()?.questions; track $index) {
+                    <app-question-input [parentFormGroup]="formInput" [question]="question"/>
+                    <br>
+                }
             </div>
-            <p>Available Responses:</p>
         </div>
-        <br>
-        @if(selectedSubmission){
-            <div class="flex-center">
-                <div [formGroup]="formInput"  style="width: 100%; max-width: 900px;">
-                    @for (question of formData()?.questions; track $index) {
-                        <app-question-input [parentFormGroup]="formInput" [question]="question"/>
-                        <br>
-                    }
-                </div>
-            </div>
-        }
     }
-}@else if(formData()){
+}
+@else if(error || userService.currentUser() === null){
     <p-message severity="error" variant="outlined">
         <p style="font-size: 40px;"><b>:(</b></p>
-        @if(userService.currentUser()){
-            <p>Current User Doesn't Own Form {{userService.currentUser()?.email}}</p>
-        }@else {
+        @if(userService.currentUser() === null){
             <p>Please Login To View Form Responses</p>
         }
-        @if(error){
+        @else{
             <p>{{error.error}}</p>
             <p>{{error.message}}</p>
         }
-    </p-message> 
-}@else {
+    </p-message>
+}
+@else {
     <i class="pi pi-spin pi-spinner center" style="font-size: 5rem;"></i>
 }

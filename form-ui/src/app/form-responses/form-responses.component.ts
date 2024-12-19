@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, computed, effect, inject, Input, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, Input, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { baseUrl, UserService } from '../user.service';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -9,6 +9,7 @@ import { Message } from 'primeng/message';
 import { Tooltip } from 'primeng/tooltip';
 import { Select } from 'primeng/select';
 import { DividerModule } from 'primeng/divider';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 interface Submission {
   submission_id: Number;
@@ -23,7 +24,7 @@ interface Submission {
   templateUrl: './form-responses.component.html',
   styleUrl: './form-responses.component.scss'
 })
-export class FormResponsesComponent implements OnInit {
+export class FormResponsesComponent {
   @Input() id !: string;
   error: any;
   http = inject(HttpClient);
@@ -36,19 +37,19 @@ export class FormResponsesComponent implements OnInit {
   formInput = new FormGroup({});
 
   constructor() {
+    toObservable(this.userService.currentUser).subscribe(
+      () => this.http.get<FormData>(baseUrl + "/api/public/forms?form_id=" + this.id).subscribe({
+        next: (res) => this.formData.set(res),
+        error: (e) => this.error = e.error
+      })
+    );
     effect(() => {
       this.http.get<Submission[]>(baseUrl + "/api/users/forms/submissions?form_id=" + this.id).subscribe(
-        res => this.submissions = res
+        {
+          next: res => this.submissions = res,
+          error: (e) => this.error = e.error
+        }
       );
-    });
-  }
-
-  ngOnInit(): void {
-    this.http.get<FormData>(baseUrl + "/api/public/forms?form_id=" + this.id).subscribe({
-      next: (res) => {
-        this.formData.set(res);
-      },
-      error: (e) => this.error = e.error
     });
   }
 
