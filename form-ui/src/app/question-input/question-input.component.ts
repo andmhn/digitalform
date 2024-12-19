@@ -9,6 +9,7 @@ import { DatePicker } from 'primeng/datepicker';
 import { MultiSelect } from 'primeng/multiselect';
 import { RadioButton } from 'primeng/radiobutton';
 import { Checkbox } from 'primeng/checkbox';
+import { Tooltip } from 'primeng/tooltip';
 
 export interface Question {
   question_id: Number;
@@ -33,7 +34,7 @@ export enum QuestionType {
 @Component({
   selector: 'app-question-input',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, Card, FloatLabel,InputText, Textarea, InputNumber, DatePicker, MultiSelect, RadioButton, Checkbox],
+  imports: [Tooltip, FormsModule, ReactiveFormsModule, Card, FloatLabel,InputText, Textarea, InputNumber, DatePicker, MultiSelect, RadioButton, Checkbox],
   templateUrl: './question-input.component.html',
   styleUrl: './question-input.component.scss'
 })

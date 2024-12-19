@@ -2,7 +2,11 @@
     @let question_id = question.question_id.toString();
     <p-card>
         @if(question.required && !parentFormGroup.get(question_id)?.valid){
-            <div style="color: red; float: right;">*</div>
+            <i 
+                class="pi pi-asterisk" 
+                style="font-size: 0.8rem; color: red; float: right;" 
+                pTooltip="required" tooltipPosition="top"
+            ></i>
         }
         <h2>{{question.query}} </h2>
         
@@ -39,7 +43,7 @@
             }
             @case (QuestionType.date) {
                 <p-floatlabel variant="on">
-                    <p-datepicker inputId="{{question_id}}" formControlName="{{question_id}}" dateFormat="dd/mm/yy" showIcon/>
+                    <p-datepicker dataType="string" inputId="{{question_id}}" formControlName="{{question_id}}" dateFormat="dd/mm/yy" showIcon/>
                     <label for="{{question_id}}">date</label>
                 </p-floatlabel>
             }

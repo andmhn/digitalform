@@ -1,17 +1,25 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, computed, effect, inject, Input, input, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, Input, input, OnInit, signal, WritableSignal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Card } from 'primeng/card';
 import { baseUrl, UserService } from '../user.service';
-import { FormControl, FormGroup } from '@angular/forms';
-import { FormData } from '../form-view/form-view.component';
-import { Question } from '../question-input/question-input.component';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Answer, FormData } from '../form-view/form-view.component';
+import { Question, QuestionInputComponent, QuestionType } from '../question-input/question-input.component';
 import { Message } from 'primeng/message';
+import { Tooltip } from 'primeng/tooltip';
+import { Select } from 'primeng/select';
+
+interface Submission {
+  submission_id: Number;
+  form_id: string;
+  answers: Answer[];
+}
 
 @Component({
   selector: 'app-form-responses',
   standalone: true,
-  imports: [Card, Message],
+  imports: [Card, Message, Tooltip, Select, FormsModule, ReactiveFormsModule, QuestionInputComponent],
   templateUrl: './form-responses.component.html',
   styleUrl: './form-responses.component.scss'
 })
@@ -22,35 +30,69 @@ export class FormResponsesComponent implements OnInit {
   router = inject(Router)
   userService = inject(UserService);
   currentUserOwnsForm = computed(() => this.userService.currentUser()?.email === this.formData()?.owner_email);
-
+  selectedSubmission: Submission | null = null;
+  submissions: Submission[] | undefined = undefined;
   formData = signal<FormData | null>(null);
   formInput = new FormGroup({});
 
-  constructor(){
+  constructor() {
     effect(() => {
-      // Todo: load responses
+      this.http.get<Submission[]>(baseUrl + "/api/users/forms/submissions?form_id=" + this.id).subscribe(
+        res => this.submissions = res
+      );
     });
   }
 
   ngOnInit(): void {
-    this.http.get<FormData>(baseUrl + "/api/public/forms?form_id=" + this.id)
-      .subscribe({
-        next: (res) => {
-          this.formData.set(res);
-          this.toFormGroup(this.formData()?.questions);
-        },
-        error: (e) => this.error = e.error
-      });
+    this.http.get<FormData>(baseUrl + "/api/public/forms?form_id=" + this.id).subscribe({
+      next: (res) => {
+        this.formData.set(res);
+      },
+      error: (e) => this.error = e.error
+    });
   }
 
-  private toFormGroup(questions: Question[] | undefined) {
-    if(questions === undefined) return;
+  export() {
+    this.http.get(baseUrl + "/api/users/forms/export?form_id=" + this.id, {
+      responseType: 'blob'
+    }).subscribe(blob => {
+      const a = document.createElement('a')
+      const objectUrl = URL.createObjectURL(blob)
+      a.href = objectUrl
+      a.download = this.formData()?.header + ' [' + new Date().toLocaleString() + '].csv';
+      a.click();
+      URL.revokeObjectURL(objectUrl);
+    });
+  }
+
+  changeFormInput() {
+    this.formInput = new FormGroup({});
+    let questions = this.formData()?.questions;
+    if (questions === undefined) return;
+
     for (let index = 0; index < questions.length; index++) {
+      let question = questions[index];
       this.formInput.setControl(
-        String(questions[index].question_id),
-        new FormControl({ value: '', disabled: true })
+        question.question_id.toString(),
+        new FormControl({
+          value: this.getAnswerOf(question),
+          disabled: true
+        })
       );
     }
-    this.formInput.reset();
+  }
+
+  private getAnswerOf(question: Question): string | string[] {
+    let answerString = this.submissions?.find(s => s === this.selectedSubmission)
+      ?.answers.find(a => question.question_id === a.question_id)
+      ?.answer
+    if (answerString === undefined) {
+      answerString = ''
+    }
+    let answerList: null | string[] = null;
+    if (question.type === QuestionType.multiple_dropdown || question.type === QuestionType.checkbox) {
+      answerList = answerString.split(',')
+    }
+    return answerList ? answerList : answerString;
   }
 }

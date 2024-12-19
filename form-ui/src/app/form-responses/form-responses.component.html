@@ -2,12 +2,29 @@
     @if(formData()){
         <p-card>
             <div>
+                <i (click)="export()" class="pi pi-download" style="font-size: 2rem; float: right; cursor: pointer;" pTooltip="export csv"></i>
                 <h1>{{formData()?.header}}</h1>
                 <h2>{{formData()?.description}}</h2>
             </div>
         </p-card>
-        <p>Responses:</p>
+        <div>
+            <div style="float: right;">
+                response id:
+                 <p-select (onChange)="changeFormInput()" [options]="submissions" [(ngModel)]="selectedSubmission" optionLabel="submission_id" placeholder="Select Submission Id" class="w-full md:w-56" />
+            </div>
+            <p>Available Responses:</p>
+        </div>
         <br>
+        @if(selectedSubmission){
+            <div class="flex-center">
+                <div [formGroup]="formInput"  style="width: 100%; max-width: 900px;">
+                    @for (question of formData()?.questions; track $index) {
+                        <app-question-input [parentFormGroup]="formInput" [question]="question"/>
+                        <br>
+                    }
+                </div>
+            </div>
+        }
     }
 }@else if(formData()){
     <p-message severity="error" variant="outlined">
