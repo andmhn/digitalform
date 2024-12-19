@@ -1,46 +1,32 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, inject, Input, OnInit } from '@angular/core';
-import { baseUrl } from '../user.service';
+import { Component, computed, inject, Input, OnInit } from '@angular/core';
+import { baseUrl, UserService } from '../user.service';
 import { Message } from 'primeng/message';
 import { CommonModule } from '@angular/common';
 import { Card } from 'primeng/card';
-import { PrimeTemplate } from 'primeng/api';
 import { Button } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TextareaModule } from 'primeng/textarea';
-import { FloatLabel } from 'primeng/floatlabel';
-import { InputNumber } from 'primeng/inputnumber';
-import { MultiSelectModule } from 'primeng/multiselect';
-import { RadioButton } from 'primeng/radiobutton';
-import { Checkbox } from 'primeng/checkbox';
-import { DatePicker } from 'primeng/datepicker';
-
-export interface Question {
-  question_id: Number;
-  query: string;
-  required: boolean;
-  type: string;
-  choices: string[];
-}
+import { Router } from '@angular/router';
+import { Question, QuestionInputComponent } from '../question-input/question-input.component';
 
 export interface FormData {
   form_id: string;
   header: string;
   description: string;
   unlisted: boolean,
+  owner_email: string,
   questions: Question[];
 }
 
-interface Answer {
-  "question_id": Number;
-  "answer": string;
+export interface Answer {
+  question_id: Number;
+  answer: string;
 }
 
 @Component({
   selector: 'app-form-view',
   standalone: true,
-  imports: [Message, Card, CommonModule, PrimeTemplate, Button, InputTextModule, FormsModule, ReactiveFormsModule, TextareaModule, FloatLabel, InputNumber, MultiSelectModule, RadioButton, Checkbox, DatePicker],
+  imports: [QuestionInputComponent, Message, Card, CommonModule, Button, FormsModule, ReactiveFormsModule],
   templateUrl: './form-view.component.html',
   styleUrl: './form-view.component.scss'
 })
@@ -49,6 +35,9 @@ export class FormViewComponent implements OnInit {
   isSubmitted = false;
   error: any;
   http = inject(HttpClient);
+  router = inject(Router)
+  userService = inject(UserService);
+  currentUserOwnsForm = computed(() => this.userService.currentUser()?.email === this.formData?.owner_email);
 
   formData: FormData | null = null;
   formInput = new FormGroup({});
@@ -92,6 +81,10 @@ export class FormViewComponent implements OnInit {
 
   showAgain() {
     this.isSubmitted = false;
+  }
+
+  goToSubmissions() {
+    this.router.navigateByUrl("/forms/" + this.id + "/responses")
   }
 
   private toFormGroup(questions: Question[]) {

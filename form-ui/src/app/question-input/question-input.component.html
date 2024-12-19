@@ -1,0 +1,75 @@
+<div [formGroup]="parentFormGroup" >
+    @let question_id = question.question_id.toString();
+    <p-card>
+        @if(question.required && !parentFormGroup.get(question_id)?.valid){
+            <div style="color: red; float: right;">*</div>
+        }
+        <h2>{{question.query}} </h2>
+        
+        @switch (question.type) {
+            @case (QuestionType.email) {
+                <p-floatlabel variant="on">
+                    <input pInputText [fluid]="true" type="email" id="{{question_id}}" formControlName="{{question_id}}" autocomplete="email"/>
+                    <label for="{{question_id}}">Email</label>
+                </p-floatlabel>
+            }
+            @case (QuestionType.short_answer) {
+                <p-floatlabel variant="on">
+                    <textarea [fluid]="true" pTextarea id="{{question_id}}" formControlName="{{question_id}}" rows="2" style="resize: none;" class="h-full"></textarea>
+                    <label for="{{question_id}}">short answer</label>
+                </p-floatlabel>
+            }
+            @case (QuestionType.long_answer) {
+                <p-floatlabel variant="on">
+                    <textarea [fluid]="true" pTextarea id="{{question_id}}" formControlName="{{question_id}}" rows="4" class="h-full" [autoResize]="true"></textarea>
+                    <label for="{{question_id}}">long answer</label>
+                </p-floatlabel>
+            }
+            @case (QuestionType.number) {
+                <p-floatlabel variant="on">
+                    <p-inputnumber inputId="{{question_id}}" [fluid]="true" formControlName="{{question_id}}" mode="decimal" [useGrouping]="false" />
+                    <label for="{{question_id}}">number</label>
+                </p-floatlabel>
+            }
+            @case (QuestionType.rupees) {
+                <p-floatlabel variant="on">
+                    <p-inputnumber inputId="{{question_id}}" [fluid]="true" formControlName="{{question_id}}"  mode="currency" currency="INR" locale="en-IN"/>
+                    <label for="{{question_id}}">rupees</label>
+                </p-floatlabel>
+            }
+            @case (QuestionType.date) {
+                <p-floatlabel variant="on">
+                    <p-datepicker inputId="{{question_id}}" formControlName="{{question_id}}" dateFormat="dd/mm/yy" showIcon/>
+                    <label for="{{question_id}}">date</label>
+                </p-floatlabel>
+            }
+            @case (QuestionType.multiple_dropdown) {
+                <p-floatlabel class="w-full md:w-80" variant="on">
+                    <p-multiselect inputId="{{question_id}}" [fluid]="true"  formControlName="{{question_id}}" [options]="question.choices" filter [maxSelectedLabels]="5" styleClass="w-full" />
+                    <label for="{{question_id}}">Multiple Dropdown</label>
+                </p-floatlabel>
+            }
+            @case (QuestionType.radiobox) {
+                <div class="flex flex-col gap-4">
+                    @for (choice of question.choices; track $index) {
+                        <div class="field-checkbox" style="margin: 10px;">
+                            <p-radiobutton inputId="{{question_id + $index}}" [value]="choice" formControlName="{{question_id}}"/>
+                            <label for="{{question_id + $index}}" class="ml-2"> {{ choice }}</label>
+                        </div>
+                    }
+                </div>
+            }
+            @case (QuestionType.checkbox) {
+                @for (choice of question.choices; track $index) {
+                    <div class="flex items-center" style="margin: 10px;">
+                        <p-checkbox inputId="{{question_id + $index}}" value="{{choice}}" formControlName="{{question_id}}" />
+                        <label for="{{question_id + $index}}" class="ml-2"> {{choice}} </label>
+                    </div>
+                }
+            }
+            @default {
+                <input type="text" id="{{question_id}}"  [fluid]="true" pInputText formControlName="{{question_id}}" placeholder="{{question.type}}"/>            
+            }
+        }
+    </p-card>
+</div>

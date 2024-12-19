@@ -4,6 +4,7 @@ import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { PublicFormsComponent } from './public-forms/public-forms.component';
 import { FormViewComponent } from './form-view/form-view.component';
+import { FormResponsesComponent } from './form-responses/form-responses.component';
 
 export const routes: Routes = [
     {
@@ -28,6 +29,12 @@ export const routes: Routes = [
     },
     {
         path: 'forms/:id',
-        component: FormViewComponent
+        component: FormViewComponent,
+        title: 'Details - Digital Form',
+    },
+    {
+        path: 'forms/:id/responses',
+        component: FormResponsesComponent,
+        title: 'Responses - Digital Form'
     }
 ];

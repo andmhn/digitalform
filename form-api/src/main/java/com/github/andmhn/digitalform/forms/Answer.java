@@ -16,6 +16,8 @@ public class Answer {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
+
+    @Column(columnDefinition="text")
     private String answer;
 
     @ManyToOne(fetch = FetchType.LAZY)

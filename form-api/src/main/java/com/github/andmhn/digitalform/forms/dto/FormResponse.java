@@ -18,13 +18,15 @@ public class FormResponse{
     String                  header;
     String                  description;
     Boolean                 unlisted;
+    String                  owner_email;
     List<QuestionResponse>  questions;
 
     // made for querying in repository
-    public FormResponse(UUID form_id, String header, String description, Boolean unlisted) {
+    public FormResponse(UUID form_id, String header, String description, Boolean unlisted, String owner_email) {
         this.form_id = form_id;
         this.header = header;
         this.description = description;
         this.unlisted = unlisted;
+        this.owner_email = owner_email;
     }
 }
