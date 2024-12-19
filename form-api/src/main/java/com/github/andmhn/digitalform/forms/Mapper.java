@@ -29,6 +29,7 @@ public class Mapper {
                 .description(form.getDescription())
                 .unlisted(form.getUnlisted())
                 .questions(form.getQuestions().stream().map(Mapper::toQuestionResponse).toList())
+                .owner_email(form.getUser().getEmail())
                 .build();
     }
 

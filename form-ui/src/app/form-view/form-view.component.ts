@@ -3,11 +3,11 @@ import { Component, computed, inject, Input, OnInit } from '@angular/core';
 import { baseUrl, UserService } from '../user.service';
 import { Message } from 'primeng/message';
 import { CommonModule } from '@angular/common';
-import { Card } from 'primeng/card';
 import { Button } from 'primeng/button';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Question, QuestionInputComponent } from '../question-input/question-input.component';
+import { DividerModule } from 'primeng/divider';
 
 export interface FormData {
   form_id: string;
@@ -26,7 +26,7 @@ export interface Answer {
 @Component({
   selector: 'app-form-view',
   standalone: true,
-  imports: [QuestionInputComponent, Message, Card, CommonModule, Button, FormsModule, ReactiveFormsModule],
+  imports: [QuestionInputComponent, Message, DividerModule, CommonModule, Button, FormsModule, ReactiveFormsModule],
   templateUrl: './form-view.component.html',
   styleUrl: './form-view.component.scss'
 })

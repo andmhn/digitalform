@@ -17,19 +17,19 @@
 }
 
 @if(formData && isSubmitted === false) {
-    <p-card>
-        <div>
-            @if(currentUserOwnsForm()){
-                <div style="float: right;">
-                    <p-button (click)="goToSubmissions()">
-                        responses
-                    </p-button>
-                </div>
-            }
-            <h1>{{formData.header}}</h1>
-            <h2>{{formData.description}}</h2>
-        </div>
-    </p-card>
+    <div>
+        @if(currentUserOwnsForm()){
+            <div style="float: right;">
+                <p-button (click)="goToSubmissions()">
+                    responses
+                </p-button>
+            </div>
+        }
+        <h1>{{formData.header}}</h1>
+        <h2>{{formData.description}}</h2>
+    </div>
+    <br>
+    <p-divider/>
     <br>
     <div class="flex-center">
         <div [formGroup]="formInput"  style="width: 100%; max-width: 900px;">

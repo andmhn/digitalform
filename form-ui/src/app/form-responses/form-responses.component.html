@@ -1,12 +1,12 @@
 @if(currentUserOwnsForm()){
     @if(formData()){
-        <p-card>
-            <div>
-                <i (click)="export()" class="pi pi-download" style="font-size: 2rem; float: right; cursor: pointer;" pTooltip="export csv"></i>
-                <h1>{{formData()?.header}}</h1>
-                <h2>{{formData()?.description}}</h2>
-            </div>
-        </p-card>
+        <div>
+            <i (click)="export()" class="pi pi-download" style="font-size: 2rem; float: right; cursor: pointer;" pTooltip="export csv"></i>
+            <h1>{{formData()?.header}}</h1>
+            <h2>{{formData()?.description}}</h2>
+        </div>
+        <br>
+        <p-divider/>
         <div>
             <div style="float: right;">
                 response id:

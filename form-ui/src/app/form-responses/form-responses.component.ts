@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, computed, effect, inject, Input, input, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, computed, effect, inject, Input, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { Card } from 'primeng/card';
 import { baseUrl, UserService } from '../user.service';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Answer, FormData } from '../form-view/form-view.component';
@@ -9,6 +8,7 @@ import { Question, QuestionInputComponent, QuestionType } from '../question-inpu
 import { Message } from 'primeng/message';
 import { Tooltip } from 'primeng/tooltip';
 import { Select } from 'primeng/select';
+import { DividerModule } from 'primeng/divider';
 
 interface Submission {
   submission_id: Number;
@@ -19,7 +19,7 @@ interface Submission {
 @Component({
   selector: 'app-form-responses',
   standalone: true,
-  imports: [Card, Message, Tooltip, Select, FormsModule, ReactiveFormsModule, QuestionInputComponent],
+  imports: [DividerModule, Message, Tooltip, Select, FormsModule, ReactiveFormsModule, QuestionInputComponent],
   templateUrl: './form-responses.component.html',
   styleUrl: './form-responses.component.scss'
 })

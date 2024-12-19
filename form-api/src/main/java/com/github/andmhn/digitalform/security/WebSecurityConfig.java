@@ -25,9 +25,9 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                        .requestMatchers("/api/public/**", "/auth/**", "/error", "/csrf").permitAll()
-                        .requestMatchers("/", "index.html", "favicon.ico", "static/**", "manifest.json").permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers("/api/users/**").authenticated()
+                        .requestMatchers("/api/public/**").permitAll()
+                        .anyRequest().permitAll())
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors(Customizer.withDefaults())
