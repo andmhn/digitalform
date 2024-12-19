@@ -11,7 +11,7 @@ import { HttpClient } from '@angular/common/http';
   styleUrl: './public-forms.component.scss'
 })
 export class PublicFormsComponent implements OnInit{
-  formPreviews: FormPreview[] = [];
+  formPreviews: FormPreview[] | null = null;
   http  = inject(HttpClient)
 
   ngOnInit(): void {

@@ -1,5 +1,8 @@
 <p>List Of Public Forms:</p>  
 <div  class="flex-grid">
+    @if(!formPreviews){
+        <i class="pi pi-spin pi-spinner center" style="font-size: 5rem;"></i>
+    }
     @for (form of formPreviews; track form.form_id) {
     <div style="padding: 10px;">
         <app-form-preview [formPreview]="form"/>

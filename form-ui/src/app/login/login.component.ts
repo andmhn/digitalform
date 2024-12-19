@@ -24,6 +24,10 @@ export class LoginComponent {
   
   userService = inject(UserService);
 
+  constructor(){
+    this.userService.error = null;
+  }
+  
   login(){
     this.userService.login({
       email: String(this.loginForm.value.email),

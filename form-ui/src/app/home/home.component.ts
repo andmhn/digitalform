@@ -11,7 +11,7 @@ import { UserService, baseUrl } from '../user.service';
   styleUrl: './home.component.scss'
 })
 export class HomeComponent {
-  userforms: FormPreview[] = [];
+  userforms: FormPreview[] | null = null;
 
   http = inject(HttpClient)
   userService = inject(UserService)

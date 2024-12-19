@@ -17,3 +17,22 @@ body {
   flex-wrap: wrap;
   justify-content: center;
 }
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.h-center {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0%);
+}

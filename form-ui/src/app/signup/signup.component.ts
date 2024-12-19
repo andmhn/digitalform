@@ -24,6 +24,10 @@ export class SignupComponent {
   });
 
   userService = inject(UserService);
+  
+  constructor(){
+    this.userService.error = null;
+  }
 
   signup(){
     this.userService.signup({

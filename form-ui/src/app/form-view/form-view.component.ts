@@ -43,14 +43,13 @@ export class FormViewComponent implements OnInit {
   formInput = new FormGroup({});
 
   ngOnInit(): void {
-    this.http.get<FormData>(baseUrl + "/api/public/forms?form_id=" + this.id)
-      .subscribe({
-        next: (res) =>{
-          this.formData = res;
-          this.toFormGroup(this.formData.questions);
-        },
-        error: (e) => this.error = e.error
-      });
+    this.http.get<FormData>(baseUrl + "/api/public/forms?form_id=" + this.id).subscribe({
+      next: (res) => {
+        this.formData = res;
+        this.toFormGroup(this.formData.questions);
+      },
+      error: (e) => this.error = e.error
+    });
   }
 
   submit() {
@@ -66,9 +65,9 @@ export class FormViewComponent implements OnInit {
         });
       }
       console.log(answers);
-      
+
       this.http.post(
-        baseUrl + "/api/public/forms/submit?form_id=" + this.id, 
+        baseUrl + "/api/public/forms/submit?form_id=" + this.id,
         answers
       ).subscribe(
         () => {

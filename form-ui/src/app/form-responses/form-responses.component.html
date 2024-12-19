@@ -1,1 +1,27 @@
-<p>form-responses works!</p>
+@if(currentUserOwnsForm()){
+    @if(formData()){
+        <p-card>
+            <div>
+                <h1>{{formData()?.header}}</h1>
+                <h2>{{formData()?.description}}</h2>
+            </div>
+        </p-card>
+        <p>Responses:</p>
+        <br>
+    }
+}@else if(formData()){
+    <p-message severity="error" variant="outlined">
+        <p style="font-size: 40px;"><b>:(</b></p>
+        @if(userService.currentUser()){
+            <p>Current User Doesn't Own Form {{userService.currentUser()?.email}}</p>
+        }@else {
+            <p>Please Login To View Form Responses</p>
+        }
+        @if(error){
+            <p>{{error.error}}</p>
+            <p>{{error.message}}</p>
+        }
+    </p-message> 
+}@else {
+    <i class="pi pi-spin pi-spinner center" style="font-size: 5rem;"></i>
+}

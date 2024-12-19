@@ -12,6 +12,10 @@
     <h3 style="cursor: pointer; color: skyblue;"><u><a (click)="showAgain()" >Submit Again</a></u></h3>
 }
 
+@if(!formData){
+    <i class="pi pi-spin pi-spinner center" style="font-size: 5rem;"></i>
+}
+
 @if(formData && isSubmitted === false) {
     <p-card>
         <div>
@@ -27,11 +31,7 @@
         </div>
     </p-card>
     <br>
-    <div style="
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    ">
+    <div class="flex-center">
         <div [formGroup]="formInput"  style="width: 100%; max-width: 900px;">
             @for (question of formData.questions; track $index) {
                 <app-question-input [parentFormGroup]="formInput" [question]="question"/>

@@ -1,12 +1,15 @@
 @if (userService.currentUser()) {
-<h1>Your Forms:</h1>  
-<div  class="flex-grid">
-    @for (form of userforms; track form.form_id) {
-    <div style="padding: 10px;">
-        <app-form-preview [formPreview]="form"/>
-    </div>
+    <h1>Your Forms:</h1>
+    @if(!userforms){
+        <i class="pi pi-spin pi-spinner center" style="font-size: 5rem;"></i>
     }
-</div>
+    <div  class="flex-grid">
+        @for (form of userforms; track form.form_id) {
+            <div style="padding: 10px;">
+                <app-form-preview [formPreview]="form"/>
+            </div>
+        }
+    </div>
 } @else {
     <h1>Login To View Your Forms!</h1>
 }
