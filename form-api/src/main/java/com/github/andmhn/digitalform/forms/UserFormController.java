@@ -1,5 +1,6 @@
 package com.github.andmhn.digitalform.forms;
 
+import com.github.andmhn.digitalform.exeptions.ForbiddenException;
 import com.github.andmhn.digitalform.exeptions.UnauthorizedException;
 import com.github.andmhn.digitalform.forms.dto.FormRequest;
 import com.github.andmhn.digitalform.forms.dto.FormResponse;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -34,6 +36,18 @@ public class UserFormController {
 
     @Autowired
     private final SubmissionService submissionService;
+
+    @GetMapping
+    public ResponseEntity<FormResponse> getFormById(
+            @AuthenticationPrincipal CustomUserDetails currentUser,
+            @RequestParam UUID form_id
+    ) {
+        FormResponse form = formService.getById(form_id);
+        if(!Objects.equals(form.getOwner_email(), currentUser.getEmail())){
+            throw new ForbiddenException("Forbidden to access");
+        }
+        return ResponseEntity.ok(form);
+    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

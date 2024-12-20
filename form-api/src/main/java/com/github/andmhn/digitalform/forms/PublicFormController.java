@@ -1,5 +1,6 @@
 package com.github.andmhn.digitalform.forms;
 
+import com.github.andmhn.digitalform.exeptions.ForbiddenException;
 import com.github.andmhn.digitalform.forms.dto.AnswerRequest;
 import com.github.andmhn.digitalform.forms.dto.FormResponse;
 import com.github.andmhn.digitalform.forms.dto.SubmissionResponse;
@@ -25,6 +26,9 @@ public class PublicFormController {
     @GetMapping
     public ResponseEntity<FormResponse> getFormById(@RequestParam UUID form_id) {
         FormResponse form = formService.getById(form_id);
+        if(!form.getPublished()){
+            throw new ForbiddenException("Forbidden to access");
+        }
         return ResponseEntity.ok(form);
     }
 

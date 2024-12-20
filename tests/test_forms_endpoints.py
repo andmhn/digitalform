@@ -12,6 +12,7 @@ formData = {
     "header": "Basic Details Form",
     "description": "Survey to know about society",
     "unlisted": False,
+    "published": True,
     "questions": [
     {
         "query": "What is Your Name?",
