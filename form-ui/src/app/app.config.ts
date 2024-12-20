@@ -8,6 +8,7 @@ import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './auth.interceptor';
+import { isDevMode } from '@angular/core';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -23,3 +24,5 @@ export const appConfig: ApplicationConfig = {
     })
   ]
 };
+
+export const baseUrl = isDevMode() ? 'http://localhost:8080' : location.origin;

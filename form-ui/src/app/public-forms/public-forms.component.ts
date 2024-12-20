@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormPreview,  FormPreviewComponent} from '../form-preview/form-preview.component';
-import { baseUrl } from '../user.service';
+import { baseUrl } from '../app.config';
 import { HttpClient } from '@angular/common/http';
 
 @Component({

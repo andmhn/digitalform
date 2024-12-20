@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, computed, effect, inject, Input, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { baseUrl, UserService } from '../user.service';
+import { UserService } from '../user.service';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Answer, FormData } from '../form-view/form-view.component';
 import { Question, QuestionInputComponent, QuestionType } from '../question-input/question-input.component';
@@ -10,6 +10,7 @@ import { Tooltip } from 'primeng/tooltip';
 import { Select } from 'primeng/select';
 import { DividerModule } from 'primeng/divider';
 import { toObservable } from '@angular/core/rxjs-interop';
+import { baseUrl } from '../app.config';
 
 interface Submission {
   submission_id: Number;

@@ -1,7 +1,8 @@
 import { Component, effect, inject, OnInit } from '@angular/core';
 import { FormPreview, FormPreviewComponent } from '../form-preview/form-preview.component';
 import { HttpClient } from '@angular/common/http';
-import { UserService, baseUrl } from '../user.service';
+import { UserService } from '../user.service';
+import { baseUrl } from '../app.config';
 
 @Component({
   selector: 'app-home',

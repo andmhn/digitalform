@@ -2,8 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { UserInterface } from './user.interface';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-
-export const baseUrl = 'http://localhost:8080';
+import { baseUrl } from './app.config';
 
 @Injectable({
   providedIn: 'root'
