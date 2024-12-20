@@ -9,6 +9,7 @@ public record FormRequest(
         String header,
         String description,
         Boolean unlisted,
+        Boolean published,
         List<QuestionRequest> questions
 ) {
 }

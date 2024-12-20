@@ -3,6 +3,7 @@ package com.github.andmhn.digitalform.forms;
 import com.github.andmhn.digitalform.exeptions.UnauthorizedException;
 import com.github.andmhn.digitalform.forms.dto.FormRequest;
 import com.github.andmhn.digitalform.forms.dto.FormResponse;
+import com.github.andmhn.digitalform.forms.dto.FormUpdateRequest;
 import com.github.andmhn.digitalform.forms.dto.SubmissionResponse;
 import com.github.andmhn.digitalform.security.CustomUserDetails;
 import com.github.andmhn.digitalform.users.User;
@@ -47,10 +48,11 @@ public class UserFormController {
 
     @GetMapping("/info")
     public ResponseEntity<List<FormResponse>> getAllUserFormsInfo(
-            @AuthenticationPrincipal CustomUserDetails currentUser
+            @AuthenticationPrincipal CustomUserDetails currentUser,
+            @RequestParam(required = false) Boolean published
     ) {
         User user = userService.getValidUserWithEmail(currentUser.getEmail());
-        List<FormResponse> userForms = formService.getAllUserFormsInfo(user);
+        List<FormResponse> userForms = formService.getAllUserFormsInfo(user, published);
         return ResponseEntity.ok(userForms);
     }
 
@@ -112,5 +114,19 @@ public class UserFormController {
         if (formOwner != currentUser)
             throw new UnauthorizedException("User Is Not Owner Of Form");
         submissionService.deleteSubmission(submission);
+    }
+
+    @PatchMapping
+    public ResponseEntity<FormResponse> updateFormById(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @RequestParam UUID form_id,
+            @RequestBody FormUpdateRequest formRequest
+    ) {
+        User user = userService.getValidUserWithEmail(customUserDetails.getEmail());
+        Form form = formService.getFormIfUserOwnsIt(user, form_id);
+        form = formService.update(form, formRequest);
+        FormResponse res = Mapper.toFormResponse(form);
+        res.setQuestions(null);
+        return ResponseEntity.ok(res);
     }
 }

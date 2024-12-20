@@ -14,7 +14,8 @@ import java.util.UUID;
 public interface FormRepository extends JpaRepository<Form, UUID> {
     @Query(
             """
-            SELECT new com.github.andmhn.digitalform.forms.dto.FormResponse(f.id, f.header , f.description, f.unlisted, f.user.email)
+            SELECT new com.github.andmhn.digitalform.forms.dto.FormResponse
+             (f.id, f.header , f.description, f.unlisted, f.published, f.user.email)
              FROM Form f WHERE f.id = :id
             """
     )
@@ -22,7 +23,8 @@ public interface FormRepository extends JpaRepository<Form, UUID> {
 
     @Query(
             """
-            SELECT new com.github.andmhn.digitalform.forms.dto.FormResponse(f.id, f.header , f.description, f.unlisted,  f.user.email)
+            SELECT new com.github.andmhn.digitalform.forms.dto.FormResponse
+             (f.id, f.header , f.description, f.unlisted, f.published, f.user.email)
              FROM Form f WHERE f.user = :user
             """
     )
@@ -30,8 +32,18 @@ public interface FormRepository extends JpaRepository<Form, UUID> {
 
     @Query(
             """
-            SELECT new com.github.andmhn.digitalform.forms.dto.FormResponse(f.id, f.header , f.description, f.unlisted,  f.user.email)
-             FROM Form f WHERE f.unlisted = :isUnlisted
+            SELECT new com.github.andmhn.digitalform.forms.dto.FormResponse
+             (f.id, f.header , f.description, f.unlisted, f.published, f.user.email)
+             FROM Form f WHERE f.user = :user and f.published = :published
+            """
+    )
+    List<FormResponse> findAllPublishedByUserDTO(User user, Boolean published);
+
+    @Query(
+            """
+            SELECT new com.github.andmhn.digitalform.forms.dto.FormResponse
+             (f.id, f.header , f.description, f.unlisted, f.published, f.user.email)
+             FROM Form f WHERE f.unlisted = :isUnlisted and f.published = true
             """
     )
     List<FormResponse> findAllByUnlistedDTO(boolean isUnlisted);

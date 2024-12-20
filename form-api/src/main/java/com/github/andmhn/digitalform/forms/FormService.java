@@ -3,10 +3,7 @@ package com.github.andmhn.digitalform.forms;
 import com.github.andmhn.digitalform.exeptions.ForbiddenException;
 import com.github.andmhn.digitalform.exeptions.NotFoundException;
 import com.github.andmhn.digitalform.exeptions.UnauthorizedException;
-import com.github.andmhn.digitalform.forms.dto.FormRequest;
-import com.github.andmhn.digitalform.forms.dto.FormResponse;
-import com.github.andmhn.digitalform.forms.dto.QuestionRequest;
-import com.github.andmhn.digitalform.forms.dto.SubmissionResponse;
+import com.github.andmhn.digitalform.forms.dto.*;
 import com.github.andmhn.digitalform.users.User;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.csv.CSVFormat;
@@ -32,6 +29,14 @@ public class FormService {
         return questionRequest.stream().map(Mapper::fromQuestionRequest).toList();
     }
 
+    public Form update(Form form, FormUpdateRequest formRequest) {
+        form.setHeader(formRequest.header());
+        form.setDescription(formRequest.description());
+        form.setUnlisted(formRequest.unlisted());
+        form.setPublished(formRequest.published());
+        return formRepository.save(form);
+    }
+
     public Form saveFormRequestForUser(FormRequest formRequest, User user) {
         List<Question> savedQuestions = saveQuestions(formRequest.questions());
         Form mappedForms = Form.builder()
@@ -39,6 +44,7 @@ public class FormService {
                 .description(formRequest.description())
                 .unlisted(formRequest.unlisted())
                 .header(formRequest.header())
+                .published(formRequest.published())
                 .questions(savedQuestions)
                 .build();
         return formRepository.save(mappedForms);
@@ -53,12 +59,16 @@ public class FormService {
         return formResponse;
     }
 
-    public List<FormResponse> getAllUserFormsInfo(User user) {
-        return formRepository.findAllByUserDTO(user);
+    public List<FormResponse> getAllUserFormsInfo(User user, Boolean published) {
+        if(published == null)
+            return formRepository.findAllByUserDTO(user);
+        else {
+            return formRepository.findAllPublishedByUserDTO(user, published);
+        }
     }
 
     public List<FormResponse> getAllUserFormsData(User user) {
-        return getAllUserFormsInfo(user).stream().map(this::injectQuestions).toList();
+        return getAllUserFormsInfo(user, null).stream().map(this::injectQuestions).toList();
     }
 
     public List<FormResponse> getAllPublicFormsInfo() {

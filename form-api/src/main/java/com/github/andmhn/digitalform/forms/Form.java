@@ -23,6 +23,7 @@ public class Form {
     private String header;
     private String description;
     private Boolean unlisted;
+    private Boolean published;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_email", referencedColumnName = "email")
