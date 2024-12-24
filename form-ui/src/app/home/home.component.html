@@ -1,4 +1,7 @@
 @if (userService.currentUser()) {
+    <div style="float: right;">
+        <p-button (click)="createForm()">compose</p-button>
+    </div>
     <h1>Your Forms:</h1>
     @if(!userforms){
         <i class="pi pi-spin pi-spinner center" style="font-size: 5rem;"></i>

@@ -5,6 +5,7 @@ import { LoginComponent } from './login/login.component';
 import { PublicFormsComponent } from './public-forms/public-forms.component';
 import { FormViewComponent } from './form-view/form-view.component';
 import { FormResponsesComponent } from './form-responses/form-responses.component';
+import { FormComposeComponent } from './form-compose/form-compose.component';
 
 export const routes: Routes = [
     {
@@ -36,5 +37,10 @@ export const routes: Routes = [
         path: 'forms/:id/responses',
         component: FormResponsesComponent,
         title: 'Responses - Digital Form'
+    },
+    {
+        path: 'forms/:id/compose',
+        component: FormComposeComponent,
+        title: 'Compose - Digital Form'
     }
 ];

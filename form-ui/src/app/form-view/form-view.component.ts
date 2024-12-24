@@ -42,7 +42,7 @@ export class FormViewComponent {
   userService = inject(UserService);
   currentUserOwnsForm = computed(() => this.userService.currentUser()?.email === this.formData?.owner_email);
 
-  formData: FormData | null = null;
+  formData: FormData | null | undefined = undefined;
   formInput = new FormGroup({});
   mod = signal("public")
 
@@ -57,7 +57,10 @@ export class FormViewComponent {
           this.formData = res;
           this.toFormGroup(this.formData.questions);
         },
-        error: (e) => this.error = e.error
+        error: (e) => {
+          this.error = e.error;
+          this.formData = null;
+        }
       });
     });
   }
@@ -107,5 +110,9 @@ export class FormViewComponent {
       );
     }
     this.formInput.reset();
+  }
+
+  edit() {
+    this.router.navigateByUrl("/forms/" + this.formData?.form_id + "/compose");
   }
 }

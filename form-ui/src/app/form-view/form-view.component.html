@@ -12,17 +12,22 @@
     <h3 style="cursor: pointer; color: skyblue;"><u><a (click)="showAgain()" >Submit Again</a></u></h3>
 }
 
-@if(!formData){
+@if(formData === undefined){
     <i class="pi pi-spin pi-spinner center" style="font-size: 5rem;"></i>
 }
 
 @if(formData && isSubmitted === false) {
     <div>
-        @if(currentUserOwnsForm() && formData.published){
-            <div style="float: right;">
-                <p-button (click)="goToSubmissions()">
-                    responses
+        @if(currentUserOwnsForm()){
+            <div style="float: right;" class="p-menubar-item-link">
+                <p-button (click)="edit()">
+                    edit
                 </p-button>
+                @if(formData.published){
+                    <p-button (click)="goToSubmissions()">
+                        responses
+                    </p-button>
+                }
             </div>
         }
         <h1>{{formData.header}}</h1>

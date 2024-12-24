@@ -1,0 +1,81 @@
+@if(error){
+    <p-message severity="error" variant="outlined" closable>
+        <p>{{error.error}}</p>
+        <p>{{error.message}}</p>
+    </p-message>
+}
+@if(!formData){
+    <i class="pi pi-spin pi-spinner center" style="font-size: 5rem;"></i>
+}
+
+@if(formData()) {
+    <div [formGroup]="formInfoEditor" >
+        <p-card >
+            @if(currentUserOwnsForm()){
+                <div class="p-menubar-item-link" style="float: right;">
+                    <p-button severity="danger" (click)="delete()">
+                        delete
+                    </p-button>
+                    @if(formData()?.published === false){
+                        <p-button (click)="save()">
+                            save
+                        </p-button> 
+                    }
+                    <p-button (click)="publish()">
+                        publish
+                    </p-button>
+                </div>
+                <div class="p-menubar-item-link" style="border:thin solid grey; border-radius: 10px; padding: 15px;  float: left;">
+                    <div><i>hidden</i></div>
+                    <p-toggleswitch inputId="hidden" formControlName="unlisted" />
+                </div>
+            }
+        </p-card>
+        <br><br>
+        <p-floatlabel variant="over">
+            <textarea [fluid]="true" pTextarea id="header" formControlName="header" rows="1"  class="h-full" [autoResize]="true"></textarea>
+            <label for="header">header</label>
+        </p-floatlabel>
+        <br><br>
+        <p-floatlabel variant="over">
+            <textarea [fluid]="true" pTextarea id="description" formControlName="description" rows="2"  class="h-full" [autoResize]="true"></textarea>
+            <label for="description">description</label>
+        </p-floatlabel>
+        <br>
+    </div>
+    <p-divider/>
+    <br>
+
+    <div [formGroup]="questionEditors" style="width: 100%; max-width: 900px;">
+        @for (question of formData()?.questions; track $index) {
+            @let question_id = question.question_id.toString();
+            <div formGroupName="{{question_id}}">
+                <p-card>
+                    <p-floatlabel variant="over">
+                        <textarea [fluid]="true" pTextarea id="{{question_id}} query" formControlName="query" rows="1" class="h-full" [autoResize]="true"></textarea>
+                        <label for="{{question_id}} query">Query {{$index + 1}}</label>
+                    </p-floatlabel>
+                    <br>
+                    <div class="flex-center" style="float: left;">
+                        <i style="padding-right: 10px;">required:</i>
+                        <p-toggleswitch inputId="{{question_id}} required" formControlName="required" />
+                    </div>
+
+                    <div class="flex-center" style="float: right;">
+                        <i style="padding-right: 10px;">type</i>
+                        <p-select formControlName="type" inputId="{{question_id}} type" [options]="questionType" placeholder="Select Type" class="w-full md:w-56" />
+                    </div>
+                    <!-- TODO: add choices -->
+                </p-card>
+            </div>
+            <br>
+        }
+    </div>
+    <br>
+    <br>
+    <div class="h-center" style="position: fixed; bottom: 10px; z-index: 9999;">
+        <p-button (click)="addQuestion()">
+            <i class="pi pi-plus"></i>
+        </p-button>
+    </div>
+}
