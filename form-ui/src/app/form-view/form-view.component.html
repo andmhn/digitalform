@@ -18,7 +18,7 @@
 
 @if(formData && isSubmitted === false) {
     <div>
-        @if(currentUserOwnsForm()){
+        @if(currentUserOwnsForm() && formData.published){
             <div style="float: right;">
                 <p-button (click)="goToSubmissions()">
                     responses
@@ -37,7 +37,9 @@
                 <app-question-input [parentFormGroup]="formInput" [question]="question"/>
                 <br>
             }
-            <p-button type="submit" [disabled]="!formInput.valid" (click)="submit()">submit</p-button>
+            @if(formData.published){
+                <p-button type="submit" [disabled]="!formInput.valid" (click)="submit()">submit</p-button>
+            }
         </div>
     </div>
 }

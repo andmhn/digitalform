@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, computed, inject, Input, OnInit } from '@angular/core';
+import { Component, computed, effect, inject, Input, OnInit, signal } from '@angular/core';
 import { UserService } from '../user.service';
 import { Message } from 'primeng/message';
 import { CommonModule } from '@angular/common';
@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { Question, QuestionInputComponent } from '../question-input/question-input.component';
 import { DividerModule } from 'primeng/divider';
 import { baseUrl } from '../app.config';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 export interface FormData {
   form_id: string;
@@ -16,6 +17,7 @@ export interface FormData {
   description: string;
   unlisted: boolean,
   owner_email: string,
+  published: boolean,
   questions: Question[];
 }
 
@@ -31,7 +33,7 @@ export interface Answer {
   templateUrl: './form-view.component.html',
   styleUrl: './form-view.component.scss'
 })
-export class FormViewComponent implements OnInit {
+export class FormViewComponent {
   @Input() id!: string;
   isSubmitted = false;
   error: any;
@@ -42,14 +44,21 @@ export class FormViewComponent implements OnInit {
 
   formData: FormData | null = null;
   formInput = new FormGroup({});
+  mod = signal("public")
 
-  ngOnInit(): void {
-    this.http.get<FormData>(baseUrl + "/api/public/forms?form_id=" + this.id).subscribe({
-      next: (res) => {
-        this.formData = res;
-        this.toFormGroup(this.formData.questions);
-      },
-      error: (e) => this.error = e.error
+  constructor() {
+    toObservable(this.userService.currentUser).subscribe(
+      () => this.mod.set(this.userService.currentUser() ? "users" : "public")
+    );
+    effect(() => {
+      this.error = null;
+      this.http.get<FormData>(baseUrl + "/api/" + this.mod() + "/forms?form_id=" + this.id).subscribe({
+        next: (res) => {
+          this.formData = res;
+          this.toFormGroup(this.formData.questions);
+        },
+        error: (e) => this.error = e.error
+      });
     });
   }
 

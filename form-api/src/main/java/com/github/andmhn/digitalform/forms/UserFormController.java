@@ -70,6 +70,7 @@ public class UserFormController {
         return ResponseEntity.ok(userForms);
     }
 
+    // to be deleted
     @GetMapping("/data")
     public ResponseEntity<List<FormResponse>> getAllUserFormsData(
             @AuthenticationPrincipal CustomUserDetails currentUser

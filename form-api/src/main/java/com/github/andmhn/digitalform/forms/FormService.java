@@ -34,6 +34,8 @@ public class FormService {
         form.setDescription(formRequest.description());
         form.setUnlisted(formRequest.unlisted());
         form.setPublished(formRequest.published());
+        if(form.getPublished() == null)
+            form.setPublished(false);
         return formRepository.save(form);
     }
 
@@ -47,6 +49,8 @@ public class FormService {
                 .published(formRequest.published())
                 .questions(savedQuestions)
                 .build();
+        if(mappedForms.getPublished() == null)
+            mappedForms.setPublished(false);
         return formRepository.save(mappedForms);
     }
 
