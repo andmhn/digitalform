@@ -8,15 +8,15 @@
     <i class="pi pi-spin pi-spinner center" style="font-size: 5rem;"></i>
 }
 
-@if(formData()) {
-    <div [formGroup]="formInfoEditor" >
+@if(formData) {
+    <div [formGroup]="formInfoEditor">
         <p-card >
             @if(currentUserOwnsForm()){
                 <div class="p-menubar-item-link" style="float: right;">
                     <p-button severity="danger" (click)="delete()">
                         delete
                     </p-button>
-                    @if(formData()?.published === false){
+                    @if(formData.published === false){
                         <p-button (click)="save()">
                             save
                         </p-button> 
@@ -46,11 +46,13 @@
     <p-divider/>
     <br>
 
-    <div [formGroup]="questionEditors" style="width: 100%; max-width: 900px;">
-        @for (question of formData()?.questions; track $index) {
+    <div [formGroup]="questionEditors" style="width: 100%; max-width: 900px;  margin-left: auto; margin-right: auto;" >
+        @for (question of formData.questions; track $index) {
             @let question_id = question.question_id.toString();
-            <div formGroupName="{{question_id}}">
+            <div formGroupName="{{question_id}}" class="shadow-8" style="border-radius: 15px;">
                 <p-card>
+                    <!-- TODO: delete query-->
+                    <br>
                     <p-floatlabel variant="over">
                         <textarea [fluid]="true" pTextarea id="{{question_id}} query" formControlName="query" rows="1" class="h-full" [autoResize]="true"></textarea>
                         <label for="{{question_id}} query">Query {{$index + 1}}</label>
@@ -62,18 +64,31 @@
                     </div>
                     <div class="flex-center" style="float: left;">
                         <i style="padding-right: 10px;">type</i>
-                        <p-select formControlName="type" inputId="{{question_id}} type" [options]="questionType" placeholder="Select Type" class="w-full md:w-56" />
+                        <p-select (ngModelChange)="updateQuestionType(question_id)" formControlName="type" inputId="{{question_id}} type" [options]="questionType" placeholder="Select Type" class="w-full md:w-56" />
                     </div>
                     <br><br>
                     @if(isMultipleType(question_id)){
-                        <p-divider/>
                         <h3>Choices:</h3>
                         <div formArrayName="choices">
-                            <div *ngFor="let bin of question.choices; let i = index">
-                                <textarea [formControlName]="i" [fluid]="true" pTextarea id="{{question_id}} {{$index}}" rows="1" class="h-full" [autoResize]="true"></textarea>
-                            </div>
+                            @for(choice of question.choices; track $index){
+                                <div class="flex-center">
+                                    <textarea [formControlName]="$index" [fluid]="true" pTextarea id="{{question_id}} {{$index}}" rows="1" class="h-full" [autoResize]="true"></textarea>
+                                    <div style="margin-left: 10px;" >
+                                        <p-button severity="secondary" (click)="removeChoice(question_id, $index)">
+                                            <i class="pi pi-times" colo style="font-size: 1rem;"></i>
+                                        </p-button>
+                                    </div>
+                                </div>
+                                <br>
+                            }
                         </div>
-                        <!-- TODO: (not delete) add choices -->
+                        <div>
+                            <p-button (click)="addChoice(question_id)">
+                                <i class="pi pi-plus" colo style="font-size: 1rem;"></i>
+                                add choice
+                            </p-button>
+                        </div>
+                        <br>
                      }
                 </p-card>
             </div>
@@ -85,6 +100,7 @@
     <div class="h-center" style="position: fixed; bottom: 10px; z-index: 9999;">
         <p-button (click)="addQuestion()">
             <i class="pi pi-plus"></i>
+            new query
         </p-button>
     </div>
 }

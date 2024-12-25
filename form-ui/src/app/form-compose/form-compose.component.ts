@@ -3,7 +3,7 @@ import { Component, computed, effect, inject, Input, OnInit, signal } from '@ang
 import { Router } from '@angular/router';
 import { UserService } from '../user.service';
 import { FormData } from '../form-view/form-view.component';
-import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { baseUrl } from '../app.config';
 import { MessageModule } from 'primeng/message';
 import { CommonModule } from '@angular/common';
@@ -29,42 +29,41 @@ export class FormComposeComponent implements OnInit {
   http = inject(HttpClient);
   router = inject(Router)
   userService = inject(UserService);
-  currentUserOwnsForm = computed(() => this.userService.currentUser()?.email === this.formData()?.owner_email);
-  formData = signal<FormData | null>(null);
+  currentUserOwnsForm = computed(() => this.userService.currentUser()?.email === this.formData?.owner_email);
+  formData: FormData | null = null;
   formInfoEditor = new FormGroup({});
   questionEditors = new FormGroup({});
   questionType = Object.values(QuestionType);
 
-  constructor() {
-    effect(() => {
-      this.formInfoEditor.setControl("header", new FormControl(this.formData()?.header));
-      this.formInfoEditor.setControl("description", new FormControl(this.formData()?.description));
-      this.formInfoEditor.setControl("unlisted", new FormControl(this.formData()?.unlisted));
-    })
-  }
-
   ngOnInit(): void {
     this.http.get<FormData>(baseUrl + "/api/users/forms?form_id=" + this.id).subscribe({
       next: (res) => {
-        this.formData.set(res);
-        this.formData()?.questions.forEach(
+        this.formData = res;
+        this.formData?.questions.forEach(
           q => this.toQuestionForm(q)
         );
+        this.formInfoEditor.setControl("header", new FormControl(this.formData?.header, Validators.required));
+        this.formInfoEditor.setControl("description", new FormControl(this.formData?.description));
+        this.formInfoEditor.setControl("unlisted", new FormControl(this.formData?.unlisted));
       },
       error: (e) => this.error = e.error
     });
   }
 
   save() {
-    this.http.patch<FormData>(
-      baseUrl + "/api/users/forms?form_id=" + this.id,
-      this.formInfoEditor.getRawValue()
-    ).subscribe({
-      next: () => {
-        this.updateChangedQuestions();
-      },
-      error: (e) => this.error = e.error
-    });
+    if (this.formInfoEditor.valid) {
+      this.http.patch<FormData>(
+        baseUrl + "/api/users/forms?form_id=" + this.id,
+        this.formInfoEditor.getRawValue()
+      ).subscribe({
+        next: () => {
+          this.updateChangedQuestions();
+        },
+        error: (e) => this.error = e.error
+      });
+    } else {
+      this.setInvalidFormErr();
+    }
   }
 
   private updateChangedQuestions() {
@@ -90,9 +89,17 @@ export class FormComposeComponent implements OnInit {
   }
 
   publish() {
-    this.formInfoEditor.setControl("published", new FormControl(true));
-    this.save();
-    this.showFormIfNotDirty();
+    if (this.questionEditors.valid && this.formInfoEditor.valid) {
+      this.formInfoEditor.setControl("published", new FormControl(true));
+      this.save();
+      this.showFormIfNotDirty();
+    } else {
+      this.setInvalidFormErr();
+    }
+  }
+
+  private setInvalidFormErr() {
+    this.error = { error: "Invalid Form", message: "Please make sure forms are not empty!!" }
   }
 
   delete() {
@@ -115,7 +122,7 @@ export class FormComposeComponent implements OnInit {
     this.http.post<Question>(baseUrl + "/api/users/questions/add?form_id=" + this.id, newQuestion).subscribe({
       next: (res) => {
         newQuestion = res;
-        this.formData()?.questions.push(newQuestion);
+        this.formData?.questions.push(newQuestion);
         this.toQuestionForm(newQuestion);
       },
       error: (e) => this.error = e.error
@@ -126,9 +133,9 @@ export class FormComposeComponent implements OnInit {
     this.questionEditors.setControl(
       String(question.question_id),
       new FormGroup({
-        'query': new FormControl(question.query),
+        'query': new FormControl(question.query, Validators.required),
         'required': new FormControl(question.required),
-        'type': new FormControl(question.type),
+        'type': new FormControl(question.type, Validators.required),
         'choices': this.toChoiceArray(question.choices)
       })
     )
@@ -136,10 +143,10 @@ export class FormComposeComponent implements OnInit {
 
   private toChoiceArray(choices: string[]) {
     if (choices == undefined)
-      return new FormArray([])
+      choices = ['new choice'];
 
     return new FormArray(
-      choices.map((c) => new FormControl(c))
+      choices.map((c) => new FormControl(c, Validators.required))
     )
   }
 
@@ -152,5 +159,38 @@ export class FormComposeComponent implements OnInit {
       return true;
     }
     return false;
+  }
+
+  removeChoice(question_id: string, index: number) {
+    let question = this.formData?.questions.find(q => String(q.question_id) === question_id);
+    if (question === undefined)
+      return;
+    if (index > -1) {
+      question?.choices.splice(index, 1);
+    }
+    this.toQuestionForm(question);
+    this.questionEditors.get(question_id)?.markAsDirty();
+  }
+
+  addChoice(question_id: string) {
+    let question = this.formData?.questions.find(q => String(q.question_id) === question_id);
+    if (question === undefined)
+      return;
+    question.choices = this.questionEditors.get(question_id)?.get('choices')?.getRawValue()
+    question.choices.push("new choice");
+    this.toQuestionForm(question);
+    this.questionEditors.get(question_id)?.markAsDirty();
+  }
+
+  updateQuestionType(question_id: string) {
+    this.formData?.questions.map(q => {
+      if (String(q.question_id) === question_id) {
+        q.type = this.questionEditors.get(question_id)?.get('type')?.getRawValue();
+
+        if (this.isMultipleType(question_id) && q.choices === undefined) {
+          q.choices = ['new choice'];
+        }
+      }
+    });
   }
 }
