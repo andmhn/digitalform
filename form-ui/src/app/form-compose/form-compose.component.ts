@@ -43,6 +43,9 @@ export class FormComposeComponent implements OnInit {
         this.formData?.questions.forEach(
           q => this.toQuestionForm(q)
         );
+        if(this.formData?.questions.length === 0){
+          this.addQuestion();
+        }
         this.formInfoEditor.setControl("header", new FormControl(this.formData?.header, Validators.required));
         this.formInfoEditor.setControl("description", new FormControl(this.formData?.description));
         this.formInfoEditor.setControl("unlisted", new FormControl(this.formData?.unlisted));
@@ -59,6 +62,7 @@ export class FormComposeComponent implements OnInit {
       ).subscribe({
         next: () => {
           this.updateChangedQuestions();
+          this.showFormIfNotDirty();
         },
         error: (e) => this.error = e.error
       });
@@ -160,23 +164,20 @@ export class FormComposeComponent implements OnInit {
   }
 
   removeChoice(questionGroup: FormGroup<any>, index: number) {
-    let question = this.formData?.questions.find(q => q.question_id === questionGroup.get("question_id")?.getRawValue());
-    if (question === undefined)
+    let choices: string[] = questionGroup.get("choices")?.getRawValue();
+    if(choices.length === 1){
+      this.error = { error: "Minimum 1 Choice Is Required"};
       return;
-    if (index > -1) {
-      question?.choices.splice(index, 1);
     }
-    questionGroup.setControl("choices", this.toChoiceArray(question.choices))
+    choices.splice(index, 1);
+    questionGroup.setControl("choices", this.toChoiceArray(choices));
     questionGroup?.markAsDirty();
   }
 
   addChoice(questionGroup: FormGroup<any>) {
-    let question = this.formData?.questions.find(q => q.question_id === questionGroup.get("question_id")?.getRawValue());
-    if (question === undefined)
-      return;
-    question.choices = questionGroup?.get('choices')?.getRawValue();
-    question.choices.push("new choice");
-    questionGroup.setControl("choices", this.toChoiceArray(question.choices))
+    let choices: string[] = questionGroup.get("choices")?.getRawValue();
+    choices.push("new choice");
+    questionGroup.setControl("choices", this.toChoiceArray(choices));
     questionGroup?.markAsDirty();
   }
 
@@ -193,6 +194,10 @@ export class FormComposeComponent implements OnInit {
   }
 
   deleteQuestion(index: number) {
+    if(this.questionEditors.length === 1){
+      this.error = { error: "Minimum 1 Question Is Required"};
+      return;
+    }
     this.http.delete(
       baseUrl + "/api/users/questions/" + this.questionEditors.at(index).get("question_id")?.getRawValue(),
     ).subscribe(() => {
