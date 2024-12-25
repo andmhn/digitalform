@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, computed, effect, inject, Input, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../user.service';
 import { FormData } from '../form-view/form-view.component';
@@ -15,11 +15,12 @@ import { Card } from 'primeng/card';
 import { ToggleSwitch } from 'primeng/toggleswitch';
 import { Question, QuestionType } from '../question-input/question-input.component';
 import { Select } from 'primeng/select';
+import { Tooltip } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-form-compose',
   standalone: true,
-  imports: [Select, ToggleSwitch, MessageModule, ReactiveFormsModule, CommonModule, DividerModule, Button, FloatLabel, Textarea, Card],
+  imports: [Select, ToggleSwitch, MessageModule, ReactiveFormsModule, CommonModule, DividerModule, Button, FloatLabel, Textarea, Card, Tooltip],
   templateUrl: './form-compose.component.html',
   styleUrl: './form-compose.component.scss'
 })
@@ -32,7 +33,7 @@ export class FormComposeComponent implements OnInit {
   currentUserOwnsForm = computed(() => this.userService.currentUser()?.email === this.formData?.owner_email);
   formData: FormData | null = null;
   formInfoEditor = new FormGroup({});
-  questionEditors = new FormGroup({});
+  questionEditors = new FormArray<FormGroup>([]);
   questionType = Object.values(QuestionType);
 
   ngOnInit(): void {
@@ -67,12 +68,10 @@ export class FormComposeComponent implements OnInit {
   }
 
   private updateChangedQuestions() {
-    for (const formControlName in this.questionEditors.controls) {
-      let formControl = this.questionEditors.get(formControlName);
-
+    for (const formControl of this.questionEditors.controls) {
       if (formControl && formControl.dirty) {
         this.http.patch<Question>(
-          baseUrl + "/api/users/questions/" + formControlName,
+          baseUrl + "/api/users/questions/" + formControl.get("question_id")?.getRawValue(),
           formControl.getRawValue()
         ).subscribe(() => {
           formControl.reset();
@@ -130,9 +129,9 @@ export class FormComposeComponent implements OnInit {
   }
 
   private toQuestionForm(question: Question) {
-    this.questionEditors.setControl(
-      String(question.question_id),
+    this.questionEditors.push(
       new FormGroup({
+        "question_id": new FormControl(question.question_id, Validators.required),
         'query': new FormControl(question.query, Validators.required),
         'required': new FormControl(question.required),
         'type': new FormControl(question.type, Validators.required),
@@ -150,8 +149,7 @@ export class FormComposeComponent implements OnInit {
     )
   }
 
-  isMultipleType(question_id: string) {
-    const type: string = this.questionEditors.get(question_id)?.get('type')?.getRawValue();
+  isMultipleType(type: string) {
     if (type === QuestionType.multiple_dropdown ||
       type === QuestionType.checkbox ||
       type === QuestionType.radiobox
@@ -161,36 +159,44 @@ export class FormComposeComponent implements OnInit {
     return false;
   }
 
-  removeChoice(question_id: string, index: number) {
-    let question = this.formData?.questions.find(q => String(q.question_id) === question_id);
+  removeChoice(questionGroup: FormGroup<any>, index: number) {
+    let question = this.formData?.questions.find(q => q.question_id === questionGroup.get("question_id")?.getRawValue());
     if (question === undefined)
       return;
     if (index > -1) {
       question?.choices.splice(index, 1);
     }
-    this.toQuestionForm(question);
-    this.questionEditors.get(question_id)?.markAsDirty();
+    questionGroup.setControl("choices", this.toChoiceArray(question.choices))
+    questionGroup?.markAsDirty();
   }
 
-  addChoice(question_id: string) {
-    let question = this.formData?.questions.find(q => String(q.question_id) === question_id);
+  addChoice(questionGroup: FormGroup<any>) {
+    let question = this.formData?.questions.find(q => q.question_id === questionGroup.get("question_id")?.getRawValue());
     if (question === undefined)
       return;
-    question.choices = this.questionEditors.get(question_id)?.get('choices')?.getRawValue()
+    question.choices = questionGroup?.get('choices')?.getRawValue();
     question.choices.push("new choice");
-    this.toQuestionForm(question);
-    this.questionEditors.get(question_id)?.markAsDirty();
+    questionGroup.setControl("choices", this.toChoiceArray(question.choices))
+    questionGroup?.markAsDirty();
   }
 
-  updateQuestionType(question_id: string) {
+  updateQuestionType(questionGroup: FormGroup<any>) {
     this.formData?.questions.map(q => {
-      if (String(q.question_id) === question_id) {
-        q.type = this.questionEditors.get(question_id)?.get('type')?.getRawValue();
+      if (q.question_id === questionGroup.get("question_id")?.getRawValue()) {
+        q.type = questionGroup.get('type')?.getRawValue();
 
-        if (this.isMultipleType(question_id) && q.choices === undefined) {
+        if (this.isMultipleType(q.type) && q.choices === undefined) {
           q.choices = ['new choice'];
         }
       }
     });
+  }
+
+  deleteQuestion(index: number) {
+    this.http.delete(
+      baseUrl + "/api/users/questions/" + this.questionEditors.at(index).get("question_id")?.getRawValue(),
+    ).subscribe(() => {
+      this.questionEditors.removeAt(index);
+    })
   }
 }

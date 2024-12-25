@@ -77,7 +77,6 @@ export class FormViewComponent {
           answer: String(this.formInput.get(String(question_id))?.getRawValue())
         });
       }
-      console.log(answers);
 
       this.http.post(
         baseUrl + "/api/public/forms/submit?form_id=" + this.id,
