@@ -56,19 +56,28 @@
                         <label for="{{question_id}} query">Query {{$index + 1}}</label>
                     </p-floatlabel>
                     <br>
-                    <div class="flex-center" style="float: left;">
+                    <div class="flex-center" style="float: right;">
                         <i style="padding-right: 10px;">required:</i>
                         <p-toggleswitch inputId="{{question_id}} required" formControlName="required" />
                     </div>
-
-                    <div class="flex-center" style="float: right;">
+                    <div class="flex-center" style="float: left;">
                         <i style="padding-right: 10px;">type</i>
                         <p-select formControlName="type" inputId="{{question_id}} type" [options]="questionType" placeholder="Select Type" class="w-full md:w-56" />
                     </div>
-                    <!-- TODO: add choices -->
+                    <br><br>
+                    @if(isMultipleType(question_id)){
+                        <p-divider/>
+                        <h3>Choices:</h3>
+                        <div formArrayName="choices">
+                            <div *ngFor="let bin of question.choices; let i = index">
+                                <textarea [formControlName]="i" [fluid]="true" pTextarea id="{{question_id}} {{$index}}" rows="1" class="h-full" [autoResize]="true"></textarea>
+                            </div>
+                        </div>
+                        <!-- TODO: (not delete) add choices -->
+                     }
                 </p-card>
             </div>
-            <br>
+            <br><br>
         }
     </div>
     <br>

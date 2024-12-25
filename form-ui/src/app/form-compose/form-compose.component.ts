@@ -3,7 +3,7 @@ import { Component, computed, effect, inject, Input, OnInit, signal } from '@ang
 import { Router } from '@angular/router';
 import { UserService } from '../user.service';
 import { FormData } from '../form-view/form-view.component';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { baseUrl } from '../app.config';
 import { MessageModule } from 'primeng/message';
 import { CommonModule } from '@angular/common';
@@ -106,7 +106,7 @@ export class FormComposeComponent implements OnInit {
 
   addQuestion() {
     let newQuestion: Question = {
-      query: "Question",
+      query: "Untitled Question",
       question_id: 0,
       required: false,
       type: QuestionType.short_answer,
@@ -126,12 +126,31 @@ export class FormComposeComponent implements OnInit {
     this.questionEditors.setControl(
       String(question.question_id),
       new FormGroup({
-        'question_id': new FormControl(question.question_id),
         'query': new FormControl(question.query),
         'required': new FormControl(question.required),
         'type': new FormControl(question.type),
-        'choices': new FormControl(question.choices)
+        'choices': this.toChoiceArray(question.choices)
       })
     )
+  }
+
+  private toChoiceArray(choices: string[]) {
+    if (choices == undefined)
+      return new FormArray([])
+
+    return new FormArray(
+      choices.map((c) => new FormControl(c))
+    )
+  }
+
+  isMultipleType(question_id: string) {
+    const type: string = this.questionEditors.get(question_id)?.get('type')?.getRawValue();
+    if (type === QuestionType.multiple_dropdown ||
+      type === QuestionType.checkbox ||
+      type === QuestionType.radiobox
+    ) {
+      return true;
+    }
+    return false;
   }
 }
