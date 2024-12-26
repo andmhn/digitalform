@@ -16,7 +16,7 @@ RUN ["npm", "run", "build"]
 # Spring Boot Build
 #===================
 
-FROM --platform=$BUILDPLATFORM maven:3.9.9-eclipse-temurin-21 AS builder
+FROM --platform=$BUILDPLATFORM maven:3.9.9-eclipse-temurin-21-alpine AS builder
 
 WORKDIR /form-api
 COPY form-api/pom.xml /form-api/pom.xml
