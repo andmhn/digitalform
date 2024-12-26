@@ -43,7 +43,10 @@ public class UserFormController {
             @RequestParam UUID form_id
     ) {
         FormResponse form = formService.getById(form_id);
-        if(!Objects.equals(form.getOwner_email(), currentUser.getEmail())){
+        if(form.getPublished()){
+            return ResponseEntity.ok(form);
+        }
+        else if(!Objects.equals(form.getOwner_email(), currentUser.getEmail())){
             throw new ForbiddenException("Forbidden to access");
         }
         return ResponseEntity.ok(form);
