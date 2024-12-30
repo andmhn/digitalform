@@ -13,6 +13,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD_FILE=/run/secrets/db-password
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - ALLOWED_ORIGINS= # put comma separated urls
     networks:
       - digitalform-network
     depends_on:
