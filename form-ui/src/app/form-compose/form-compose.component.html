@@ -8,29 +8,27 @@
     <i class="pi pi-spin pi-spinner center" style="font-size: 5rem;"></i>
 }
 
-@if(formData) {
+@if(formData && currentUserOwnsForm()) {
     <div [formGroup]="formInfoEditor">
         <p-card >
-            @if(currentUserOwnsForm()){
-                <div class="p-menubar-item-link" style="float: right;">
-                    <p-button severity="danger" (click)="deleteForm()" pTooltip="delete" tooltipPosition="top">
-                        <i class="pi pi-trash" colo style="font-size: 1rem;"></i>
-                    </p-button>
-                    @if(formData.published === false){
-                        <p-button (click)="saveForm()" pTooltip="save" tooltipPosition="top">
-                            <i class="pi pi-save" colo style="font-size: 1rem;"></i>
-                        </p-button> 
-                    }
-                    <p-button (click)="publishForm()">
-                        <i class="pi pi-send" colo style="font-size: 1rem;"></i>
-                        publish
-                    </p-button>
-                </div>
-                <div class="p-menubar-item-link" style="border:thin solid grey; border-radius: 10px; padding: 15px;  float: left;">
-                    <div><i>hidden</i></div>
-                    <p-toggleswitch inputId="hidden" formControlName="unlisted" />
-                </div>
-            }
+            <div class="p-menubar-item-link" style="float: right;">
+                <p-button severity="danger" (click)="deleteForm()" pTooltip="delete" tooltipPosition="top">
+                    <i class="pi pi-trash" colo style="font-size: 1rem;"></i>
+                </p-button>
+                @if(formData.published === false){
+                    <p-button (click)="saveForm()" pTooltip="save" tooltipPosition="top">
+                        <i class="pi pi-save" colo style="font-size: 1rem;"></i>
+                    </p-button> 
+                }
+                <p-button (click)="publishForm()">
+                    <i class="pi pi-send" colo style="font-size: 1rem;"></i>
+                    publish
+                </p-button>
+            </div>
+            <div class="p-menubar-item-link" style="border:thin solid grey; border-radius: 10px; padding: 15px;  float: left;">
+                <div><i>hidden</i></div>
+                <p-toggleswitch inputId="hidden" formControlName="unlisted" />
+            </div>
         </p-card>
         <br><br>
         <p-floatlabel variant="over">
