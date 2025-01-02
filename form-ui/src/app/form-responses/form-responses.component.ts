@@ -31,7 +31,10 @@ export class FormResponsesComponent {
   http = inject(HttpClient);
   router = inject(Router)
   userService = inject(UserService);
-  currentUserOwnsForm = computed(() => this.userService.currentUser()?.email === this.formData()?.owner_email);
+  currentUserOwnsForm = computed(() =>
+     this.userService.currentUser() != null &&
+     this.userService.currentUser()?.email === this.formData()?.owner_email);
+     
   selectedSubmission: Submission | null = null;
   submissions: Submission[] | undefined = undefined;
   formData = signal<FormData | null>(null);

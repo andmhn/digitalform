@@ -44,7 +44,7 @@ export class QuestionComposeComponent implements OnInit {
   addQuestion() {
     let newQuestion: Question = {
       query: "Untitled Question",
-      index: 1,
+      index: this.questionEditors.length + 1,
       question_id: 0,
       required: false,
       type: QuestionType.short_answer,

@@ -17,22 +17,24 @@
 }
 
 @if(formData && isSubmitted === false) {
+    @if(currentUserOwnsForm()){
+        <div class="p-menubar-item-link">
+            <p-button (click)="copyLinkToClipboard()" pTooltip="copy link to clipboard" tooltipPosition="bottom">
+                <i class="pi pi-copy" colo style="font-size: 1rem;"></i>
+                copy link
+            </p-button>
+            <p-button (click)="edit()" pTooltip="edit form" tooltipPosition="bottom">
+                <i class="pi pi-pencil" colo style="font-size: 1rem;"></i>
+                edit
+            </p-button>
+            @if(formData.published){
+                <p-button (click)="goToSubmissions()">
+                    view responses
+                </p-button>
+            }
+        </div>
+    }
     <div>
-        @if(currentUserOwnsForm()){
-            <div style="float: right;" class="p-menubar-item-link">
-                <p-button (click)="copyLinkToClipboard()" pTooltip="copy link to clipboard" tooltipPosition="top">
-                    <i class="pi pi-copy" colo style="font-size: 1rem;"></i>
-                </p-button>
-                <p-button (click)="edit()">
-                    edit
-                </p-button>
-                @if(formData.published){
-                    <p-button (click)="goToSubmissions()">
-                        responses
-                    </p-button>
-                }
-            </div>
-        }
         <h1>{{formData.header}}</h1>
         <h2>{{formData.description}}</h2>
     </div>
