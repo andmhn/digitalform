@@ -1,0 +1,67 @@
+@if(error){
+    <p-message severity="error" variant="outlined" closable>
+        <p>{{error.error}}</p>
+        <p>{{error.message}}</p>
+    </p-message>
+}
+<div style="width: 100%; max-width: 900px;  margin-left: auto; margin-right: auto;" >
+    @for(questionGroup of questionEditors.controls; track $index){
+        @let question_id = questionGroup.get('question_id')?.getRawValue();
+        <div [formGroup]="questionGroup" class="shadow-8" style="border-radius: 15px;">
+            <p-card>
+                <div style="float: right;" pTooltip="delete" tooltipPosition="top">
+                    <p-button severity="secondary" (click)="deleteQuestion($index)">
+                       <i class="pi pi-trash" colo style="font-size: 1rem;"></i>
+                    </p-button>
+                </div>
+                <br><br>
+                <p-floatlabel variant="over">
+                    <textarea [fluid]="true" pTextarea id="{{question_id}} query" formControlName="query" rows="1" class="h-full" [autoResize]="true"></textarea>
+                    <label for="{{question_id}} query">Query {{$index + 1}}</label>
+                </p-floatlabel>
+                <br>
+                <div class="flex-center" style="float: right;">
+                    <i style="padding-right: 10px;">required:</i>
+                    <p-toggleswitch inputId="{{question_id}} required" formControlName="required" />
+                </div>
+                <div class="flex-center" style="float: left;">
+                    <i style="padding-right: 10px;">type</i>
+                    <p-select (ngModelChange)="updateQuestionType(questionGroup)" formControlName="type" inputId="{{question_id}} type" [options]="questionType" placeholder="Select Type" class="w-full md:w-56" />
+                </div>
+                <br><br>
+                @if(isMultipleType(questionGroup.get("type")?.getRawValue())){
+                    <h3>Choices:</h3>
+                    <div formArrayName="choices">
+                        @for(choice of questionGroup.get("choices")?.getRawValue(); track $index){
+                            <div class="flex-center">
+                                <textarea [formControlName]="$index" [fluid]="true" pTextarea id="{{question_id}} {{$index}}" rows="1" class="h-full" [autoResize]="true"></textarea>
+                                <div style="margin-left: 10px;" >
+                                    <p-button severity="secondary" (click)="removeChoice(questionGroup, $index)">
+                                        <i class="pi pi-times" colo style="font-size: 1rem;"></i>
+                                    </p-button>
+                                </div>
+                            </div>
+                            <br>
+                        }
+                    </div>
+                    <div>
+                        <p-button (click)="addChoice(questionGroup)">
+                            <i class="pi pi-plus" colo style="font-size: 1rem;"></i>
+                            add choice
+                        </p-button>
+                    </div>
+                    <br>
+                }
+            </p-card>
+        </div>
+        <br><br>
+    }
+</div>
+<br>
+<br>
+<div class="h-center" style="position: fixed; bottom: 10px; z-index: 9999;">
+    <p-button (click)="addQuestion()">
+        <i class="pi pi-plus"></i>
+        new query
+    </p-button>
+</div>
