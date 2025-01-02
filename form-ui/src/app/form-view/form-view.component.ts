@@ -1,12 +1,12 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, computed, effect, inject, Input, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, Input, signal } from '@angular/core';
 import { UserService } from '../user.service';
 import { Message } from 'primeng/message';
 import { CommonModule } from '@angular/common';
 import { Button } from 'primeng/button';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Question, QuestionInputComponent } from '../question-input/question-input.component';
+import { Question, QuestionViewComponent } from '../question-view/question-view.component';
 import { DividerModule } from 'primeng/divider';
 import { baseUrl } from '../app.config';
 import { toObservable } from '@angular/core/rxjs-interop';
@@ -29,7 +29,7 @@ export interface Answer {
 @Component({
   selector: 'app-form-view',
   standalone: true,
-  imports: [QuestionInputComponent, Message, DividerModule, CommonModule, Button, FormsModule, ReactiveFormsModule],
+  imports: [QuestionViewComponent, Message, DividerModule, CommonModule, Button, FormsModule, ReactiveFormsModule],
   templateUrl: './form-view.component.html',
   styleUrl: './form-view.component.scss'
 })

@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { UserService } from '../user.service';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Answer, FormData } from '../form-view/form-view.component';
-import { Question, QuestionInputComponent, QuestionType } from '../question-input/question-input.component';
+import { Question, QuestionViewComponent, QuestionType } from '../question-view/question-view.component';
 import { Message } from 'primeng/message';
 import { Tooltip } from 'primeng/tooltip';
 import { Select } from 'primeng/select';
@@ -21,7 +21,7 @@ interface Submission {
 @Component({
   selector: 'app-form-responses',
   standalone: true,
-  imports: [DividerModule, Message, Tooltip, Select, FormsModule, ReactiveFormsModule, QuestionInputComponent],
+  imports: [DividerModule, Message, Tooltip, Select, FormsModule, ReactiveFormsModule, QuestionViewComponent],
   templateUrl: './form-responses.component.html',
   styleUrl: './form-responses.component.scss'
 })

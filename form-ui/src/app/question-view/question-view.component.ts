@@ -32,13 +32,13 @@ export enum QuestionType {
 }
 
 @Component({
-  selector: 'app-question-input',
+  selector: 'app-question-view',
   standalone: true,
   imports: [Tooltip, FormsModule, ReactiveFormsModule, Card, FloatLabel,InputText, Textarea, InputNumber, DatePicker, MultiSelect, RadioButton, Checkbox],
-  templateUrl: './question-input.component.html',
-  styleUrl: './question-input.component.scss'
+  templateUrl: './question-view.component.html',
+  styleUrl: './question-view.component.scss'
 })
-export class QuestionInputComponent {
+export class QuestionViewComponent {
   @Input() parentFormGroup!: FormGroup;
   @Input() question!: Question;
   readonly QuestionType = QuestionType;

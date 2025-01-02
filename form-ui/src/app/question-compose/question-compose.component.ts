@@ -1,6 +1,6 @@
-import { Component, effect, inject, Input, OnInit, signal } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Question, QuestionType } from '../question-input/question-input.component';
+import { Question, QuestionType } from '../question-view/question-view.component';
 import { Select } from 'primeng/select';
 import { ToggleSwitch } from 'primeng/toggleswitch';
 import { MessageModule } from 'primeng/message';

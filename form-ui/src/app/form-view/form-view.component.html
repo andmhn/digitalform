@@ -39,7 +39,7 @@
     <div class="flex-center">
         <div [formGroup]="formInput"  style="width: 100%; max-width: 900px;">
             @for (question of formData.questions; track $index) {
-                <app-question-input [parentFormGroup]="formInput" [question]="question"/>
+                <app-question-view [parentFormGroup]="formInput" [question]="question"/>
                 <br>
             }
             @if(formData.published){
