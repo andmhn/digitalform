@@ -38,9 +38,6 @@ export class FormComposeComponent implements OnInit {
     this.http.get<FormData>(baseUrl + "/api/users/forms?form_id=" + this.id).subscribe({
       next: (res) => {
         this.formData = res;
-        if(!this.currentUserOwnsForm()){
-          this.error = {error: "Unauthorized", message: "current user is not owner of form!"}
-        }
         this.formInfoEditor.setControl("header", new FormControl(this.formData?.header, Validators.required));
         this.formInfoEditor.setControl("description", new FormControl(this.formData?.description));
         this.formInfoEditor.setControl("unlisted", new FormControl(this.formData?.unlisted));

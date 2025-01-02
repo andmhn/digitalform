@@ -10,6 +10,7 @@ import { Question, QuestionViewComponent } from '../question-view/question-view.
 import { DividerModule } from 'primeng/divider';
 import { baseUrl } from '../app.config';
 import { toObservable } from '@angular/core/rxjs-interop';
+import { Tooltip } from 'primeng/tooltip';
 
 export interface FormData {
   form_id: string;
@@ -29,7 +30,7 @@ export interface Answer {
 @Component({
   selector: 'app-form-view',
   standalone: true,
-  imports: [QuestionViewComponent, Message, DividerModule, CommonModule, Button, FormsModule, ReactiveFormsModule],
+  imports: [QuestionViewComponent, Message, DividerModule, CommonModule, Button, FormsModule, ReactiveFormsModule, Tooltip],
   templateUrl: './form-view.component.html',
   styleUrl: './form-view.component.scss'
 })
@@ -95,7 +96,11 @@ export class FormViewComponent {
   }
 
   goToSubmissions() {
-    this.router.navigateByUrl("/forms/" + this.id + "/responses")
+    this.router.navigateByUrl("/forms/" + this.id + "/responses");
+  }
+
+  copyLinkToClipboard(){
+    navigator.clipboard.writeText(location.host + "/#" + this.router.url);
   }
 
   private toFormGroup(questions: Question[]) {

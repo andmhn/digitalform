@@ -4,11 +4,17 @@
         <p>{{error.message}}</p>
     </p-message>
 }
-@if(!formData){
+@else if(!formData){
     <i class="pi pi-spin pi-spinner center" style="font-size: 5rem;"></i>
 }
 
-@if(formData && currentUserOwnsForm()) {
+@if (formData && !currentUserOwnsForm()) {
+    <p-message severity="error" variant="outlined" closable>
+        <p>Unauthorized</p>
+        <p>current user is not owner of form!</p>
+    </p-message>
+}
+@else if(formData && currentUserOwnsForm()) {
     <div [formGroup]="formInfoEditor">
         <p-card >
             <div class="p-menubar-item-link" style="float: right;">
