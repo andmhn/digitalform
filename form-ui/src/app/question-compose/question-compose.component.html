@@ -9,6 +9,14 @@
         @let question_id = questionGroup.get('question_id')?.getRawValue();
         <div [formGroup]="questionGroup" class="shadow-8" style="border-radius: 15px;">
             <p-card>
+                <div class="h-center">
+                    <p-button class="gap-row" pTooltip="move Up" tooltipPosition="top" severity="secondary" (click)="moveUp($index)">
+                       <i class="pi pi-angle-double-up" colo style="font-size: 1rem;"></i>
+                    </p-button>
+                    <p-button pTooltip="move Down" tooltipPosition="top" severity="secondary" (click)="moveDown($index)">
+                        <i class="pi pi-angle-double-down" colo style="font-size: 1rem;"></i>
+                     </p-button>
+                </div>
                 <div style="float: right;" pTooltip="delete" tooltipPosition="top">
                     <p-button severity="secondary" (click)="deleteQuestion($index)">
                        <i class="pi pi-trash" colo style="font-size: 1rem;"></i>

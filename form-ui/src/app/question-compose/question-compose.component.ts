@@ -131,6 +131,39 @@ export class QuestionComposeComponent implements OnInit {
     }
   }
 
+  moveUp(index: number) {
+    if(index == 0) return;
+    this.swapForm(index, index - 1);
+  }
+  
+  moveDown(index: number) {
+    if(index == this.questionEditors.length - 1) return;
+    this.swapForm(index, index + 1);
+  }
+
+  private swapForm(i : number, j : number){
+    let current = this.questionEditors.at(i);
+    let other = this.questionEditors.at(j);
+
+    let currentValues = current.value;
+    let otherValues = other.value;
+    
+    // swap question id
+    let temp = currentValues.question_id;
+    currentValues.question_id = other.value.question_id;
+    otherValues.question_id = temp;
+
+    current.setValue(currentValues);
+    other.setValue(otherValues);
+    
+    current.markAsDirty();
+    other.markAsDirty();
+    
+    // swap form group
+    this.questionEditors.setControl(i, other);
+    this.questionEditors.setControl(j, current);
+  }
+
   private toQuestionForm(question: Question) {
     this.questionEditors.push(
       new FormGroup({
