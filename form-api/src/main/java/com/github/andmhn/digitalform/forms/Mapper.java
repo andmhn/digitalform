@@ -6,6 +6,7 @@ public class Mapper {
     public static QuestionResponse toQuestionResponse(Question question) {
         return QuestionResponse.builder()
                 .question_id(question.getId())
+                .index(question.getIndex())
                 .query(question.getQuery())
                 .required(question.isRequired())
                 .type(question.getType())
@@ -15,6 +16,7 @@ public class Mapper {
 
     public static Question fromQuestionRequest(QuestionRequest questionRequest) {
         return Question.builder()
+                .index(questionRequest.index())
                 .query(questionRequest.query())
                 .type(questionRequest.type())
                 .choices(questionRequest.choices())

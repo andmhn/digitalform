@@ -63,6 +63,7 @@ public class QuestionController {
                     "User: " + user.getEmail() + " doesn't own containing form: "+savedQuestion.getForm().getId()
             );
         }
+        savedQuestion.setIndex(questionRequest.index());
         savedQuestion.setQuery(questionRequest.query());
         savedQuestion.setRequired(questionRequest.required());
         savedQuestion.setType(questionRequest.type());

@@ -44,6 +44,7 @@ export class QuestionComposeComponent implements OnInit {
   addQuestion() {
     let newQuestion: Question = {
       query: "Untitled Question",
+      index: 1,
       question_id: 0,
       required: false,
       type: QuestionType.short_answer,
@@ -149,9 +150,9 @@ export class QuestionComposeComponent implements OnInit {
     let otherValues = other.value;
     
     // swap question id
-    let temp = currentValues.question_id;
-    currentValues.question_id = other.value.question_id;
-    otherValues.question_id = temp;
+    let temp = currentValues.index;
+    currentValues.index = other.value.index;
+    otherValues.index = temp;
 
     current.setValue(currentValues);
     other.setValue(otherValues);
@@ -168,6 +169,7 @@ export class QuestionComposeComponent implements OnInit {
     this.questionEditors.push(
       new FormGroup({
         "question_id": new FormControl(question.question_id, Validators.required),
+        'index': new FormControl(question.index, Validators.required),
         'query': new FormControl(question.query, Validators.required),
         'required': new FormControl(question.required),
         'type': new FormControl(question.type, Validators.required),

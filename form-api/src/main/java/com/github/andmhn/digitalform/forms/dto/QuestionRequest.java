@@ -7,6 +7,7 @@ import java.util.List;
 @Builder
 public record QuestionRequest(
         String       query,
+        Integer      index,
         boolean      required,
         String       type,
         List<String> choices

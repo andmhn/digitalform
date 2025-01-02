@@ -13,6 +13,7 @@ import { Tooltip } from 'primeng/tooltip';
 
 export interface Question {
   question_id: Number;
+  index: Number;
   query: string;
   required: boolean;
   type: QuestionType;

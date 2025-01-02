@@ -19,6 +19,7 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    private Integer index;
     private String query;
     private boolean required;
     private String type;
