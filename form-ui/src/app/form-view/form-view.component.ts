@@ -119,4 +119,13 @@ export class FormViewComponent {
   edit() {
     this.router.navigateByUrl("/forms/" + this.formData?.form_id + "/compose");
   }
+  
+  deleteForm() {
+    this.http.delete(baseUrl + "/api/users/forms?form_id=" + this.id).subscribe({
+      next: () => {
+        this.router.navigateByUrl("/");
+      },
+      error: (e) => this.error = e.error
+    });
+  }
 }
