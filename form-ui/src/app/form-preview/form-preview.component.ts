@@ -4,7 +4,7 @@ import { Card } from 'primeng/card';
 import { Ripple } from 'primeng/ripple';
 
 export interface FormPreview {
-  form_id :string;
+  form_id :number;
   header: string;
   description :string;
   unlisted: boolean;

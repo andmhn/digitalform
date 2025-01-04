@@ -1,21 +1,12 @@
 package com.github.andmhn.digitalform.users;
 
-import com.github.andmhn.digitalform.exeptions.ForbiddenException;
-import com.github.andmhn.digitalform.exeptions.NotFoundException;
 import com.github.andmhn.digitalform.exeptions.UnauthorizedException;
-import com.github.andmhn.digitalform.forms.Form;
-import com.github.andmhn.digitalform.forms.FormRepository;
-import com.github.andmhn.digitalform.forms.Mapper;
-import com.github.andmhn.digitalform.forms.Submission;
-import com.github.andmhn.digitalform.forms.dto.SubmissionResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor

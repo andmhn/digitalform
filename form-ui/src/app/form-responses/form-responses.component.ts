@@ -14,7 +14,7 @@ import { baseUrl } from '../app.config';
 
 interface Submission {
   submission_id: Number;
-  form_id: string;
+  form_id: number;
   answers: Answer[];
 }
 
@@ -26,7 +26,7 @@ interface Submission {
   styleUrl: './form-responses.component.scss'
 })
 export class FormResponsesComponent {
-  @Input() id !: string;
+  @Input() id !: number;
   error: any;
   http = inject(HttpClient);
   router = inject(Router)

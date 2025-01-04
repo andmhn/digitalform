@@ -1,5 +1,3 @@
-from http.client import CREATED
-from time import sleep
 import requests
 from requests.auth import HTTPBasicAuth
 import uuid
@@ -71,7 +69,7 @@ def test_creation_of_form_without_credential():
 
 def test_get_form_by_id():
     response = requests.get(
-        BASE_URL + "/api/public/forms?form_id=" + formResponse['form_id'],
+        BASE_URL + "/api/public/forms?form_id=" + str(formResponse['form_id']),
         headers= headers
     )
     assert response.status_code == http.HTTPStatus.OK
@@ -115,7 +113,7 @@ def test_get_public_forms_data_and_info():
 
 def test_submission_of_form():
     form_id = formResponse['form_id']
-    url = BASE_URL + "/api/public/forms/submit?form_id=" + form_id
+    url = BASE_URL + "/api/public/forms/submit?form_id=" + str(form_id)
     submission = [
       {
         "question_id": formResponse['questions'][0]['question_id'],
@@ -148,7 +146,7 @@ def test_submission_of_form():
   
 def test_submission_of_form_with_only_required_answers():
     form_id = formResponse['form_id']
-    url = BASE_URL + "/api/public/forms/submit?form_id=" + form_id
+    url = BASE_URL + "/api/public/forms/submit?form_id=" + str(form_id)
     submission = [
       {
         "question_id": formResponse['questions'][0]['question_id'],
@@ -174,7 +172,7 @@ def test_submission_of_form_with_only_required_answers():
 
 def test_submission_of_form_without_required_answers():
     form_id = formResponse['form_id']
-    url = BASE_URL + "/api/public/forms/submit?form_id=" + form_id
+    url = BASE_URL + "/api/public/forms/submit?form_id=" + str(form_id)
     submission = [
       {
         "question_id": formResponse['questions'][0]['question_id'],
@@ -192,7 +190,7 @@ def test_submission_of_form_without_required_answers():
 
 def test_submission_of_form_with_additional_answer():
     form_id = formResponse['form_id']
-    url = BASE_URL + "/api/public/forms/submit?form_id=" + form_id
+    url = BASE_URL + "/api/public/forms/submit?form_id=" + str(form_id)
     submission = [
       {
         "question_id": formResponse['questions'][0]['question_id'],
@@ -218,7 +216,7 @@ def test_submission_of_form_with_additional_answer():
 
 def test_getting_submission_list_of_form():
     form_id = formResponse['form_id']
-    url = BASE_URL + "/api/users/forms/submissions?form_id=" + form_id
+    url = BASE_URL + "/api/users/forms/submissions?form_id=" + str(form_id)
 
     response = requests.request("GET", 
                                 url, 
@@ -234,7 +232,7 @@ def test_getting_submission_list_of_form():
 def test_should_fail_getting_submission_of_form_of_other_user():
     test_user = create_new_user()
     form_id = formResponse['form_id']
-    url = BASE_URL + "/api/users/forms/submissions?form_id=" + form_id
+    url = BASE_URL + "/api/users/forms/submissions?form_id=" + str(form_id)
 
     submission_response = requests.request(
         "GET", url, headers=headers, 
@@ -245,8 +243,8 @@ def test_should_fail_getting_submission_of_form_of_other_user():
  
    
 def test_should_fail_getting_submission_list_of_non_existing_form():
-    non_existing_form_id = str(uuid.uuid1())
-    url = BASE_URL + "/api/users/forms/submissions?form_id=" + non_existing_form_id
+    non_existing_form_id = formResponse['form_id'] + 40404
+    url = BASE_URL + "/api/users/forms/submissions?form_id=" + str(non_existing_form_id)
     response = requests.request("GET", 
                                 url, 
                                 headers=headers, 
@@ -276,7 +274,7 @@ def test_should_delete_submission_as_form_owner():
 def test_should_not_delete_form_as_non_owner():
     test_user = create_new_user()
     response = requests.delete(
-        BASE_URL + "/api/users/forms?form_id=" + formResponse['form_id'],
+        BASE_URL + "/api/users/forms?form_id=" + str(formResponse['form_id']),
         auth=HTTPBasicAuth(test_user["email"], test_user["password"])
     )
     assert response.status_code == http.HTTPStatus.FORBIDDEN
@@ -286,13 +284,13 @@ def test_should_not_delete_form_as_non_owner():
 
 def test_should_delete_form_as_owner():
     response = requests.delete(
-        BASE_URL + "/api/users/forms?form_id=" + formResponse['form_id'],
+        BASE_URL + "/api/users/forms?form_id=" + str(formResponse['form_id']),
         auth=HTTPBasicAuth(signup_payload["email"], signup_payload["password"])
     )
     assert response.status_code == http.HTTPStatus.OK
     # check getting deleted form
     response = requests.get(
-        BASE_URL + "/api/public/forms?form_id=" + formResponse['form_id']
+        BASE_URL + "/api/public/forms?form_id=" + str(formResponse['form_id'])
     )
     assert response.status_code == http.HTTPStatus.NOT_FOUND
  

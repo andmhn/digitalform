@@ -1,12 +1,9 @@
 package com.github.andmhn.digitalform.users;
 
 import com.github.andmhn.digitalform.exeptions.ConflictException;
-import com.github.andmhn.digitalform.exeptions.UnauthorizedException;
-import com.github.andmhn.digitalform.security.CustomUserDetails;
 import com.github.andmhn.digitalform.users.dto.AuthResponse;
 import com.github.andmhn.digitalform.users.dto.LoginRequest;
 import com.github.andmhn.digitalform.users.dto.SignUpRequest;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.http.HttpStatus;

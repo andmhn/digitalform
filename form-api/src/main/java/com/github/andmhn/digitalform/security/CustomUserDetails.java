@@ -2,7 +2,6 @@ package com.github.andmhn.digitalform.security;
 
 import java.io.Serial;
 import java.util.Collection;
-import java.util.UUID;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,7 +12,7 @@ import lombok.Data;
 public class CustomUserDetails implements UserDetails {
     @Serial
     private static final long serialVersionUID = 1L;
-    private UUID id;
+    private Long id;
     private String email;
     private String password;
     private String name;

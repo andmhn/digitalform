@@ -13,7 +13,7 @@ import { toObservable } from '@angular/core/rxjs-interop';
 import { Tooltip } from 'primeng/tooltip';
 
 export interface FormData {
-  form_id: string;
+  form_id: number;
   header: string;
   description: string;
   unlisted: boolean,
@@ -35,7 +35,7 @@ export interface Answer {
   styleUrl: './form-view.component.scss'
 })
 export class FormViewComponent {
-  @Input() id!: string;
+  @Input() id!: number;
   isSubmitted = false;
   error: any;
   http = inject(HttpClient);

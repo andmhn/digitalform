@@ -22,7 +22,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
@@ -40,7 +39,7 @@ public class UserFormController {
     @GetMapping
     public ResponseEntity<FormResponse> getFormById(
             @AuthenticationPrincipal CustomUserDetails currentUser,
-            @RequestParam UUID form_id
+            @RequestParam Long form_id
     ) {
         FormResponse form = formService.getById(form_id);
         if(form.getPublished()){
@@ -87,7 +86,7 @@ public class UserFormController {
     @ResponseStatus(HttpStatus.OK)
     public List<SubmissionResponse> getAllSubmissions(
             @AuthenticationPrincipal CustomUserDetails currentUser,
-            @RequestParam UUID form_id
+            @RequestParam Long form_id
     ) {
         User user = userService.getValidUserWithEmail(currentUser.getEmail());
         return formService.getAllSubmissionsOfForm(user, form_id);
@@ -97,7 +96,7 @@ public class UserFormController {
     @ResponseStatus(HttpStatus.OK)
     public void deleteForm(
             @AuthenticationPrincipal CustomUserDetails currentUser,
-            @RequestParam UUID form_id
+            @RequestParam Long form_id
     ) {
         User user = userService.getValidUserWithEmail(currentUser.getEmail());
         formService.delete_form(user, form_id);
@@ -106,7 +105,7 @@ public class UserFormController {
     @GetMapping("/export")
     public void exportIntoCSV(HttpServletResponse response,
                               @AuthenticationPrincipal CustomUserDetails currentUser,
-                              @RequestParam UUID form_id
+                              @RequestParam Long form_id
     ) throws IOException {
         User validUserWithEmail = userService.getValidUserWithEmail(currentUser.getEmail());
         Form form = formService.getFormIfUserOwnsIt(validUserWithEmail, form_id);
@@ -137,7 +136,7 @@ public class UserFormController {
     @PatchMapping
     public ResponseEntity<FormResponse> updateFormById(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @RequestParam UUID form_id,
+            @RequestParam Long form_id,
             @RequestBody FormUpdateRequest formRequest
     ) {
         User user = userService.getValidUserWithEmail(customUserDetails.getEmail());

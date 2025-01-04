@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @Builder
 @Data
@@ -14,7 +13,7 @@ import java.util.UUID;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class FormResponse{
-    UUID                    form_id;
+    Long                    form_id;
     String                  header;
     String                  description;
     Boolean                 unlisted;
@@ -23,7 +22,7 @@ public class FormResponse{
     List<QuestionResponse>  questions;
 
     // made for querying in repository
-    public FormResponse(UUID form_id, String header, String description, Boolean unlisted, Boolean published, String owner_email) {
+    public FormResponse(Long form_id, String header, String description, Boolean unlisted, Boolean published, String owner_email) {
         this.form_id = form_id;
         this.header = header;
         this.description = description;

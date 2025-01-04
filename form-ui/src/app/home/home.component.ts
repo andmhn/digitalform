@@ -32,7 +32,7 @@ export class HomeComponent {
 
   createForm() {
     let newForm: FormData = {
-      form_id: "",
+      form_id: 0,
       header: "Untitled Form",
       description: "",
       unlisted: true,

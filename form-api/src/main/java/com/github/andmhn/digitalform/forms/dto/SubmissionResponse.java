@@ -4,12 +4,11 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
-import java.util.UUID;
 
 @Builder
 @Data
 public class SubmissionResponse {
     Long submission_id;
-    UUID form_id;
+    Long form_id;
     List<AnswerResponse> answers;
 }

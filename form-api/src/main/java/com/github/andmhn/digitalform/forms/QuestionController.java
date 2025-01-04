@@ -14,7 +14,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
@@ -32,7 +31,7 @@ public class QuestionController {
     @PostMapping("/users/questions/add")
     public QuestionResponse addQuestion(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @RequestParam UUID form_id,
+            @RequestParam Long form_id,
             @RequestBody QuestionRequest questionRequest
     ){
         User user = userService.getValidUserWithEmail(customUserDetails.getEmail());
@@ -101,7 +100,7 @@ public class QuestionController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/public/questions")
     public List<QuestionResponse> getAllQuestion(
-            @RequestParam UUID form_id
+            @RequestParam Long form_id
     ){
         Form form = formRepository.findById(form_id).orElseThrow(() -> new NotFoundException("Not Found"));
         return questionRepository.getAllByFormDTO(form);

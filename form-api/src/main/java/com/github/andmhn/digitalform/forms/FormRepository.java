@@ -8,10 +8,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
-public interface FormRepository extends JpaRepository<Form, UUID> {
+public interface FormRepository extends JpaRepository<Form, Long> {
     @Query(
             """
             SELECT new com.github.andmhn.digitalform.forms.dto.FormResponse
@@ -19,7 +18,7 @@ public interface FormRepository extends JpaRepository<Form, UUID> {
              FROM Form f WHERE f.id = :id
             """
     )
-    Optional<FormResponse> findByIdDTO(UUID id);
+    Optional<FormResponse> findByIdDTO(Long id);
 
     @Query(
             """

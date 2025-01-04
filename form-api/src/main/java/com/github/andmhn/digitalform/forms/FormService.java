@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -83,19 +82,19 @@ public class FormService {
         return getAllPublicFormsInfo().stream().map(this::injectQuestions).toList();
     }
 
-    public FormResponse getById(UUID formId) throws NotFoundException {
+    public FormResponse getById(Long formId) throws NotFoundException {
         FormResponse savedForm = formRepository.findByIdDTO(formId)
                 .orElseThrow(() -> new NotFoundException("No Such Form with form id: " + formId));
         return injectQuestions(savedForm);
     }
 
-    public List<SubmissionResponse> getAllSubmissionsOfForm(User currentUser, UUID form_id) {
+    public List<SubmissionResponse> getAllSubmissionsOfForm(User currentUser, Long form_id) {
         Form form = getFormIfUserOwnsIt(currentUser, form_id);
         List<Submission> submissions = form.getSubmissions();
         return submissions.stream().map(Mapper::toSubmissionResponse).toList();
     }
 
-    public Form getFormIfUserOwnsIt(User currentUser, UUID form_id) {
+    public Form getFormIfUserOwnsIt(User currentUser, Long form_id) {
         Form form = formRepository.findById(form_id).orElseThrow(() -> new NotFoundException("No Such form"));
         User formUser = form.getUser();
         if (currentUser != formUser) {
@@ -104,7 +103,7 @@ public class FormService {
         return form;
     }
 
-    public void delete_form(User user, UUID form_id) throws UnauthorizedException {
+    public void delete_form(User user, Long form_id) throws UnauthorizedException {
         Form form = getFormIfUserOwnsIt(user, form_id);
         formRepository.delete(form);
     }

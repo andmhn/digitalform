@@ -23,7 +23,7 @@ import { Router } from '@angular/router';
   styleUrl: './question-compose.component.scss',
 })
 export class QuestionComposeComponent implements OnInit {
-  @Input() formId !: string;
+  @Input() formId !: number;
   @Input() questions: Question[] = [];
 
   error: any;

@@ -23,7 +23,7 @@ import { QuestionComposeComponent } from "../question-compose/question-compose.c
   styleUrl: './form-compose.component.scss'
 })
 export class FormComposeComponent implements OnInit {
-  @Input() id!: string;
+  @Input() id!: number;
   @ViewChild(QuestionComposeComponent) questionComposer!: QuestionComposeComponent;
 
   error: any;

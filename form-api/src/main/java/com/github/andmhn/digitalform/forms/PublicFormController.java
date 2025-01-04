@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/public/forms")
@@ -24,7 +23,7 @@ public class PublicFormController {
     private final SubmissionService submissionService;
 
     @GetMapping
-    public ResponseEntity<FormResponse> getFormById(@RequestParam UUID form_id) {
+    public ResponseEntity<FormResponse> getFormById(@RequestParam Long form_id) {
         FormResponse form = formService.getById(form_id);
         if(!form.getPublished()){
             throw new ForbiddenException("Forbidden to access");
@@ -46,7 +45,7 @@ public class PublicFormController {
 
     @PostMapping("/submit")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public SubmissionResponse handleSubmission(@RequestParam UUID form_id, @RequestBody List<AnswerRequest> answers) {
+    public SubmissionResponse handleSubmission(@RequestParam Long form_id, @RequestBody List<AnswerRequest> answers) {
         return submissionService.handleSubmissionOfForm(form_id, answers);
     }
 }

@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +27,7 @@ public class SubmissionService {
         submissionRepository.delete(submission);
     }
 
-    public SubmissionResponse handleSubmissionOfForm(UUID form_id, List<AnswerRequest> answers){
+    public SubmissionResponse handleSubmissionOfForm(Long form_id, List<AnswerRequest> answers){
         Form currentForm = formRepository.findById(form_id).orElseThrow(() -> new NotFoundException("No Such Form: " + form_id));
         Submission submission = groupAnswersAsSubmission(answers, currentForm);
         submission = submissionRepository.save(submission);
