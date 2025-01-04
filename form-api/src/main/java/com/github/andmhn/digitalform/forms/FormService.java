@@ -96,8 +96,8 @@ public class FormService {
 
     public Form getFormIfUserOwnsIt(User currentUser, Long form_id) {
         Form form = formRepository.findById(form_id).orElseThrow(() -> new NotFoundException("No Such form"));
-        User formUser = form.getUser();
-        if (currentUser != formUser) {
+        boolean isUserFormOwner = currentUser.getId().equals(form.getUser().getId());
+        if (!isUserFormOwner) {
             throw new ForbiddenException("User doesn't own form");
         }
         return form;

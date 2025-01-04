@@ -14,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @RestController
@@ -36,7 +37,7 @@ public class QuestionController {
     ){
         User user = userService.getValidUserWithEmail(customUserDetails.getEmail());
         Form savedForm = formRepository.findById(form_id).orElseThrow(() -> new NotFoundException("Not Found"));
-        boolean userOwnsTheForm = savedForm.getUser() == user;
+        boolean userOwnsTheForm = Objects.equals(savedForm.getUser().getId(), user.getId());
         if(!userOwnsTheForm){
             throw new UnauthorizedException(
                     "User: " + user.getEmail() + " doesn't own containing form: " + savedForm.getId()
@@ -56,7 +57,7 @@ public class QuestionController {
             ){
         User user = userService.getValidUserWithEmail(customUserDetails.getEmail());
         Question savedQuestion = questionRepository.findById(id).orElseThrow(() -> new NotFoundException("Not Found"));
-        boolean userOwnsTheForm = savedQuestion.getForm().getUser() == user;
+        boolean userOwnsTheForm = Objects.equals(savedQuestion.getForm().getUser().getId(), user.getId());
         if(!userOwnsTheForm){
             throw new UnauthorizedException(
                     "User: " + user.getEmail() + " doesn't own containing form: "+savedQuestion.getForm().getId()
@@ -79,7 +80,7 @@ public class QuestionController {
     ){
         User user = userService.getValidUserWithEmail(customUserDetails.getEmail());
         Question savedQuestion = questionRepository.findById(id).orElseThrow(() -> new NotFoundException("Not Found"));
-        boolean userOwnsTheForm = savedQuestion.getForm().getUser() == user;
+        boolean userOwnsTheForm = Objects.equals(savedQuestion.getForm().getUser().getId(), user.getId());
         if(!userOwnsTheForm){
             throw new UnauthorizedException(
                     "User: " + user.getEmail() + " doesn't own containing form: "+savedQuestion.getForm().getId()

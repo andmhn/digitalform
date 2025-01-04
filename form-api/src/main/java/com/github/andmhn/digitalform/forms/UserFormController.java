@@ -127,8 +127,8 @@ public class UserFormController {
     ){
         User currentUser = userService.getValidUserWithEmail(customUserDetails.getEmail());
         Submission submission = submissionService.getSubmission(submissionId);
-        User formOwner = submission.getForm().getUser();
-        if (formOwner != currentUser)
+        boolean userOwnsTheForm = Objects.equals(submission.getForm().getUser().getId(), currentUser.getId());
+        if (!userOwnsTheForm)
             throw new UnauthorizedException("User Is Not Owner Of Form");
         submissionService.deleteSubmission(submission);
     }
