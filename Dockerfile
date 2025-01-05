@@ -16,7 +16,7 @@ RUN ["npm", "run", "build"]
 # Spring Boot Build
 #===================
 
-FROM --platform=$BUILDPLATFORM maven:3.9.9-eclipse-temurin-21-alpine AS builder
+FROM --platform=$BUILDPLATFORM maven:3.9.9-eclipse-temurin-17-alpine AS builder
 
 WORKDIR /form-api
 COPY form-api/pom.xml /form-api/pom.xml
@@ -30,7 +30,7 @@ RUN mvn package -DskipTests
 # Spring Boot Run
 #=================
 
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:17-jre-alpine
 
 EXPOSE 8080
 VOLUME /tmp
