@@ -2,6 +2,8 @@ package com.github.andmhn.digitalform.forms;
 
 import com.github.andmhn.digitalform.forms.dto.*;
 
+import java.util.List;
+
 public class Mapper {
     public static QuestionResponse toQuestionResponse(Question question) {
         return QuestionResponse.builder()
@@ -14,8 +16,9 @@ public class Mapper {
                 .build();
     }
 
-    public static Question fromQuestionRequest(QuestionRequest questionRequest) {
+    public static Question fromQuestionRequest(QuestionRequest questionRequest, Long fk_form) {
         return Question.builder()
+                .fk_form(fk_form)
                 .index(questionRequest.index())
                 .query(questionRequest.query())
                 .type(questionRequest.type())
@@ -24,31 +27,31 @@ public class Mapper {
                 .build();
     }
 
-    public static FormResponse toFormResponse(Form form) {
+    public static FormResponse toFormResponse(Form form, List<Question> questions, String ownerEmail) {
         return FormResponse.builder()
                 .form_id(form.getId())
                 .header(form.getHeader())
                 .description(form.getDescription())
                 .unlisted(form.getUnlisted())
                 .published(form.getPublished())
-                .questions(form.getQuestions().stream().map(Mapper::toQuestionResponse).toList())
-                .owner_email(form.getUser().getEmail())
+                .questions(questions.stream().map(Mapper::toQuestionResponse).toList())
+                .owner_email(ownerEmail)
                 .build();
     }
 
     public static AnswerResponse toAnswerResponse(Answer answer){
         return AnswerResponse.builder()
                 .answer_id(answer.getId())
-                .question_id(answer.getQuestion().getId())
+                .question_id(answer.getFk_question())
                 .answer(answer.getAnswer())
                 .build();
     }
 
-    public static SubmissionResponse toSubmissionResponse(Submission submission) {
+    public static SubmissionResponse toSubmissionResponse(Submission submission, Long fk_form, List<Answer> answers) {
         return SubmissionResponse.builder()
                 .submission_id(submission.getId())
-                .form_id(submission.getForm().getId())
-                .answers(submission.getAnswers().stream().map(Mapper::toAnswerResponse).toList())
+                .form_id(fk_form)
+                .answers(answers.stream().map(Mapper::toAnswerResponse).toList())
                 .build();
     }
 }

@@ -238,7 +238,7 @@ def test_should_fail_getting_submission_of_form_of_other_user():
         "GET", url, headers=headers, 
         auth=HTTPBasicAuth(test_user["email"], test_user["password"])
     )
-    assert submission_response.status_code == http.HTTPStatus.FORBIDDEN
+    assert submission_response.status_code == http.HTTPStatus.UNAUTHORIZED
     delete_user(test_user["email"], test_user["password"])
  
    
@@ -277,7 +277,7 @@ def test_should_not_delete_form_as_non_owner():
         BASE_URL + "/api/users/forms?form_id=" + str(formResponse['form_id']),
         auth=HTTPBasicAuth(test_user["email"], test_user["password"])
     )
-    assert response.status_code == http.HTTPStatus.FORBIDDEN
+    assert response.status_code == http.HTTPStatus.UNAUTHORIZED
     # delete user
     delete_user(test_user["email"], test_user["password"])
     

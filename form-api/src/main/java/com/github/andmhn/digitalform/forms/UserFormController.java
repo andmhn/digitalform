@@ -2,10 +2,7 @@ package com.github.andmhn.digitalform.forms;
 
 import com.github.andmhn.digitalform.exeptions.ForbiddenException;
 import com.github.andmhn.digitalform.exeptions.UnauthorizedException;
-import com.github.andmhn.digitalform.forms.dto.FormRequest;
-import com.github.andmhn.digitalform.forms.dto.FormResponse;
-import com.github.andmhn.digitalform.forms.dto.FormUpdateRequest;
-import com.github.andmhn.digitalform.forms.dto.SubmissionResponse;
+import com.github.andmhn.digitalform.forms.dto.*;
 import com.github.andmhn.digitalform.security.CustomUserDetails;
 import com.github.andmhn.digitalform.users.User;
 import com.github.andmhn.digitalform.users.UserService;
@@ -20,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -58,8 +56,7 @@ public class UserFormController {
             @RequestBody FormRequest formRequest
     ) {
         User user = userService.getValidUserWithEmail(currentUser.getEmail());
-        Form savedForm = formService.saveFormRequestForUser(formRequest, user);
-        return Mapper.toFormResponse(savedForm);
+        return formService.saveFormRequestForUser(formRequest, user);
     }
 
     @GetMapping("/info")
@@ -127,7 +124,7 @@ public class UserFormController {
     ){
         User currentUser = userService.getValidUserWithEmail(customUserDetails.getEmail());
         Submission submission = submissionService.getSubmission(submissionId);
-        boolean userOwnsTheForm = Objects.equals(submission.getForm().getUser().getId(), currentUser.getId());
+        boolean userOwnsTheForm = submissionService.userOwnsContainingForm(submission, currentUser);
         if (!userOwnsTheForm)
             throw new UnauthorizedException("User Is Not Owner Of Form");
         submissionService.deleteSubmission(submission);
@@ -142,7 +139,7 @@ public class UserFormController {
         User user = userService.getValidUserWithEmail(customUserDetails.getEmail());
         Form form = formService.getFormIfUserOwnsIt(user, form_id);
         form = formService.update(form, formRequest);
-        FormResponse res = Mapper.toFormResponse(form);
+        FormResponse res = Mapper.toFormResponse(form, new ArrayList<>(), user.getEmail());
         res.setQuestions(null);
         return ResponseEntity.ok(res);
     }

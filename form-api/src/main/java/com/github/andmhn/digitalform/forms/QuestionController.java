@@ -37,14 +37,13 @@ public class QuestionController {
     ){
         User user = userService.getValidUserWithEmail(customUserDetails.getEmail());
         Form savedForm = formRepository.findById(form_id).orElseThrow(() -> new NotFoundException("Not Found"));
-        boolean userOwnsTheForm = Objects.equals(savedForm.getUser().getId(), user.getId());
+        boolean userOwnsTheForm = Objects.equals(savedForm.getFk_user(), user.getId());
         if(!userOwnsTheForm){
             throw new UnauthorizedException(
                     "User: " + user.getEmail() + " doesn't own containing form: " + savedForm.getId()
             );
         }
-        Question question = Mapper.fromQuestionRequest(questionRequest);
-        question.setForm(savedForm);
+        Question question = Mapper.fromQuestionRequest(questionRequest, form_id);
         return Mapper.toQuestionResponse(questionRepository.save(question));
     }
 
@@ -57,10 +56,10 @@ public class QuestionController {
             ){
         User user = userService.getValidUserWithEmail(customUserDetails.getEmail());
         Question savedQuestion = questionRepository.findById(id).orElseThrow(() -> new NotFoundException("Not Found"));
-        boolean userOwnsTheForm = Objects.equals(savedQuestion.getForm().getUser().getId(), user.getId());
+        boolean userOwnsTheForm = userOwnsContainingForm(savedQuestion.getFk_form(), user.getId());
         if(!userOwnsTheForm){
             throw new UnauthorizedException(
-                    "User: " + user.getEmail() + " doesn't own containing form: "+savedQuestion.getForm().getId()
+                    "User: " + user.getEmail() + " doesn't own containing form: "+savedQuestion.getFk_form()
             );
         }
         savedQuestion.setIndex(questionRequest.index());
@@ -68,8 +67,13 @@ public class QuestionController {
         savedQuestion.setRequired(questionRequest.required());
         savedQuestion.setType(questionRequest.type());
         savedQuestion.setChoices(questionRequest.choices());
-        Question updatedQuestion = questionRepository.save(savedQuestion);
+        Question updatedQuestion = questionRepository.update(savedQuestion);
         return Mapper.toQuestionResponse(updatedQuestion);
+    }
+
+    private boolean userOwnsContainingForm(Long form_id , Long user_id) {
+        Form savedform = formRepository.findById(form_id).orElseThrow(() -> new NotFoundException("Not Found"));
+        return savedform.getFk_user() .equals(user_id);
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -80,10 +84,10 @@ public class QuestionController {
     ){
         User user = userService.getValidUserWithEmail(customUserDetails.getEmail());
         Question savedQuestion = questionRepository.findById(id).orElseThrow(() -> new NotFoundException("Not Found"));
-        boolean userOwnsTheForm = Objects.equals(savedQuestion.getForm().getUser().getId(), user.getId());
+        boolean userOwnsTheForm = userOwnsContainingForm(savedQuestion.getFk_form(), user.getId());
         if(!userOwnsTheForm){
             throw new UnauthorizedException(
-                    "User: " + user.getEmail() + " doesn't own containing form: "+savedQuestion.getForm().getId()
+                    "User: " + user.getEmail() + " doesn't own containing form: "+savedQuestion.getFk_form()
             );
         }
         questionRepository.delete(savedQuestion);

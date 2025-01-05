@@ -15,7 +15,7 @@ public record QuestionResponse (
         String       query,
         boolean      required,
         String       type,
-        List<String> choices
+        String[]     choices
 ) {
 
 }

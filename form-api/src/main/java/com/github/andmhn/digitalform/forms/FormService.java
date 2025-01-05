@@ -1,6 +1,5 @@
 package com.github.andmhn.digitalform.forms;
 
-import com.github.andmhn.digitalform.exeptions.ForbiddenException;
 import com.github.andmhn.digitalform.exeptions.NotFoundException;
 import com.github.andmhn.digitalform.exeptions.UnauthorizedException;
 import com.github.andmhn.digitalform.forms.dto.*;
@@ -24,9 +23,11 @@ public class FormService {
     @Autowired
     private final QuestionRepository questionRepository;
 
-    private List<Question> saveQuestions(List<QuestionRequest> questionRequest) {
-        return questionRequest.stream().map(Mapper::fromQuestionRequest).toList();
-    }
+    @Autowired
+    private final SubmissionRepository submissionRepository;
+
+    @Autowired
+    private final AnswerRepository answerRepository;
 
     public Form update(Form form, FormUpdateRequest formRequest) {
         form.setHeader(formRequest.header());
@@ -35,22 +36,24 @@ public class FormService {
         form.setPublished(formRequest.published());
         if(form.getPublished() == null)
             form.setPublished(false);
-        return formRepository.save(form);
+        return formRepository.update(form);
     }
 
-    public Form saveFormRequestForUser(FormRequest formRequest, User user) {
-        List<Question> savedQuestions = saveQuestions(formRequest.questions());
+    public FormResponse saveFormRequestForUser(FormRequest formRequest, User user) {
         Form mappedForms = Form.builder()
-                .user(user)
                 .description(formRequest.description())
                 .unlisted(formRequest.unlisted())
                 .header(formRequest.header())
                 .published(formRequest.published())
-                .questions(savedQuestions)
+                .fk_user(user.getId())
                 .build();
         if(mappedForms.getPublished() == null)
             mappedForms.setPublished(false);
-        return formRepository.save(mappedForms);
+        Form savedForm = formRepository.save(mappedForms);
+        List<Question> savedQuestions = formRequest.questions().stream()
+                .map( q -> Mapper.fromQuestionRequest(q, savedForm.getId()))
+                .map(questionRepository::save).toList();
+        return Mapper.toFormResponse(savedForm,savedQuestions, user.getEmail());
     }
 
     private FormResponse injectQuestions(FormResponse formResponse) {
@@ -89,16 +92,19 @@ public class FormService {
     }
 
     public List<SubmissionResponse> getAllSubmissionsOfForm(User currentUser, Long form_id) {
-        Form form = getFormIfUserOwnsIt(currentUser, form_id);
-        List<Submission> submissions = form.getSubmissions();
-        return submissions.stream().map(Mapper::toSubmissionResponse).toList();
+        getFormIfUserOwnsIt(currentUser, form_id); // TODO: make it efficient in repo with func (for every entity)
+        List<Submission> submissions = submissionRepository.findByFormId(form_id);
+        return submissions.stream().map(s -> {
+            List<Answer> answers = answerRepository.findAllBySubmissionID(s.getId());
+            return Mapper.toSubmissionResponse(s, form_id, answers);
+        }).toList();
     }
 
     public Form getFormIfUserOwnsIt(User currentUser, Long form_id) {
         Form form = formRepository.findById(form_id).orElseThrow(() -> new NotFoundException("No Such form"));
-        boolean isUserFormOwner = currentUser.getId().equals(form.getUser().getId());
+        boolean isUserFormOwner = currentUser.getId().equals(form.getFk_user());
         if (!isUserFormOwner) {
-            throw new ForbiddenException("User doesn't own form");
+            throw new UnauthorizedException("User doesn't own form");
         }
         return form;
     }
@@ -110,14 +116,16 @@ public class FormService {
 
     public void writeFormResponses(Form form, Writer writer) throws IOException {
         CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT);
-        List<Question> formQuestions = form.getQuestions();
-        List<String> questionHeaders = formQuestions.stream().map(Question::getQuery).toList();
+        List<QuestionResponse> formQuestions = questionRepository.getAllByFormDTO(form);
+        List<String> questionHeaders = formQuestions.stream().map(QuestionResponse::query).toList();
         printer.printRecord(questionHeaders);
 
-        for (Submission submission : form.getSubmissions()) {
-            for (Question currentQuestion : formQuestions) {
-                String answerForQuestion = submission.getAnswers().stream()
-                        .filter(answer -> answer.getQuestion().equals(currentQuestion))
+        List<Submission> submissions = submissionRepository.findByFormId(form.getId());
+        for (Submission submission : submissions) {
+            for (QuestionResponse currentQuestion : formQuestions) {
+                List<Answer> answers = answerRepository.findAllBySubmissionID(submission.getId());
+                String answerForQuestion = answers.stream()
+                        .filter(answer -> answer.getFk_question().equals(currentQuestion.question_id()))
                         .map(Answer::getAnswer)
                         .findFirst()
                         .orElse("");

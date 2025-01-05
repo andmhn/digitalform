@@ -46,6 +46,6 @@ public class PublicFormController {
     @PostMapping("/submit")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public SubmissionResponse handleSubmission(@RequestParam Long form_id, @RequestBody List<AnswerRequest> answers) {
-        return submissionService.handleSubmissionOfForm(form_id, answers);
+        return submissionService.saveSubmissionOfForm(form_id, answers);
     }
 }

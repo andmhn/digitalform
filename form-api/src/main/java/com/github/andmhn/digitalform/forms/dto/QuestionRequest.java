@@ -10,6 +10,6 @@ public record QuestionRequest(
         Integer      index,
         boolean      required,
         String       type,
-        List<String> choices
+        String[]     choices
 ) {
 }

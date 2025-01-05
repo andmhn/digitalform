@@ -12,7 +12,25 @@ import java.util.Optional;
 public class UserRepository {
     private final JdbcTemplate jdbcTemplate;
 
-    Optional<User> findByEmail(String email) {
+    public Optional<User> findById(Long id) {
+        try {
+            User user = jdbcTemplate.queryForObject(
+                    "SELECT * FROM users WHERE id = ?",
+                    (rs, rowId) -> new User(
+                            rs.getLong("id"),
+                            rs.getString("name"),
+                            rs.getString("email"),
+                            rs.getString("password")
+                    ),
+                    id
+            );
+            if (user != null) return Optional.of(user);
+        } catch (DataAccessException ignored) {
+        }
+        return Optional.empty();
+    }
+
+    public Optional<User> findByEmail(String email) {
         try {
             User user = jdbcTemplate.queryForObject(
                     "SELECT * FROM users WHERE email = ?",
@@ -20,8 +38,7 @@ public class UserRepository {
                             rs.getLong("id"),
                             rs.getString("name"),
                             rs.getString("email"),
-                            rs.getString("password"),
-                            null
+                            rs.getString("password")
                     ),
                     email
             );
@@ -31,30 +48,29 @@ public class UserRepository {
         return Optional.empty();
     }
 
-    boolean existsByEmail(String email) {
+    public boolean existsByEmail(String email) {
         Long exists = jdbcTemplate.queryForObject(
-                "select count(*) from users where email = ?",
+                "SELECT COUNT(*) FROM users WHERE email = ?",
                 (rs, q) -> rs.getLong("count"),
                 email
         );
         return exists != null && !exists.equals(0L);
     }
 
-    User save(User user) {
+    public User save(User user) {
         return jdbcTemplate.queryForObject(
-                "insert into users(email, name, password) values (?, ?, ?) returning *",
+                "INSERT INTO users(email, name, password) VALUES (?, ?, ?) RETURNING *",
                 (rs, q) -> new User(
                         rs.getLong("id"),
                         rs.getString("name"),
                         rs.getString("email"),
-                        rs.getString("password"),
-                        null
+                        rs.getString("password")
                 ),
                 user.getEmail(), user.getName(), user.getPassword()
         );
     }
 
-    void delete(User user) {
-        jdbcTemplate.execute("delete from users where id = " + user.getId());
+    public void delete(User user) {
+        jdbcTemplate.update("DELETE FROM users WHERE id = ?", user.getId());
     }
 }
