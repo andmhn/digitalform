@@ -1,7 +1,7 @@
 package com.github.andmhn.digitalform.security;
 
-import com.github.andmhn.digitalform.users.UserService;
-import com.github.andmhn.digitalform.users.User;
+import com.github.andmhn.digitalform.service.UserService;
+import com.github.andmhn.digitalform.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
