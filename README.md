@@ -8,7 +8,7 @@ Host your own form server and take control of your data!
 
 Deploying your own Digital Form instance is easy with Docker Compose.
 
-1.  **Clone the repository:** (Assuming you have the project code in a Git repository)
+1.  **Clone the repository:**
     ```bash
     git clone https://github.com/andmhn/digitalform
     cd digital-form
