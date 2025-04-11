@@ -23,7 +23,7 @@ Deploying your own Digital Form instance is easy with Docker Compose.
     * **Angular:** The frontend user interface.
     * **PostgreSQL:** The database to store form definitions and submissions.
 
-Once the services are up and running, you can access the application in your web browser. The frontend is typically served on port `80` (or another port you configure in your `docker-compose.yml` file).
+Once the services are up and running, you can access the application in your web browser. The frontend is typically served on port `8080` (or another port you configure in your `docker-compose.yml` file).
 
 ## Features
 
