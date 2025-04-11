@@ -10,7 +10,7 @@ Deploying your own Digital Form instance is easy with Docker Compose.
 
 1.  **Clone the repository:** (Assuming you have the project code in a Git repository)
     ```bash
-    git clone <repository_url>
+    git clone https://github.com/andmhn/digitalform
     cd digital-form
     ```
 2.  **Start the services:**
